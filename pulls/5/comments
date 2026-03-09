@@ -1,0 +1,122 @@
+## Cambio adicional requerido — Campos DSS/UC en base de datos
+
+El campo de flag de housing benefit debe usar la nomenclatura técnica **DSS/UC** en la base de datos interna (uso exclusivo del equipo y landlords, nunca visible al lead).
+
+### Cambiar en `supabase/migrations/00003_scl_scoring.sql`:
+
+**En tabla `leads` — reemplazar `es_beneficio_housing` por `es_dss`:**
+```sql
+-- Flag DSS/UC — uso interno equipo y landlords, nunca visible al lead
+ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS es_dss BOOLEAN NOT NULL DEFAULT FALSE;
+COMMENT ON COLUMN public.leads.es_dss IS 'TRUE si el lead recibe DSS/UC (housing benefit). Flag de matching únicamente — NO afecta el scl_score. Uso interno: permite alertar a landlords que aceptan DSS.';
+
+ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS dss_requisitos_cumplidos BOOLEAN DEFAULT FALSE;
+COMMENT ON COLUMN public.leads.dss_requisitos_cumplidos IS 'TRUE cuando el lead DSS/UC ha cumplido requisitos del landlord (garantor, meses adelantados, carta oficial). Permite acceso al pool completo de propiedades.';
+
+ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS dss_notas TEXT;
+COMMENT ON COLUMN public.leads.dss_notas IS 'Notas internas sobre situación DSS/UC del lead y requisitos pendientes con el landlord.';
+```
+
+**En tabla `properties` — reemplazar `acepta_beneficio_housing` por `acepta_dss`:**
+```sql
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS acepta_dss BOOLEAN NOT NULL DEFAULT FALSE;
+COMMENT ON COLUMN public.properties.acepta_dss IS 'TRUE si el landlord acepta DSS/UC. Cuando TRUE, el sistema alerta inmediatamente al equipo para contactar al lead DSS compatible.';
+
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS dss_requisitos TEXT;
+COMMENT ON COLUMN public.properties.dss_requisitos IS 'Requisitos específicos del landlord para leads DSS/UC (ej: garantor requerido, 6 meses adelantados, Housing Authority letter).';
+```
+
+### Renombrar vistas:
+- `v_leads_beneficio_pendientes` → **`v_leads_dss_pendientes`**
+- `v_match_beneficio` → **`v_match_dss`**
+
+### Vista `v_leads_dss_pendientes` — flujo de alerta inmediata:
+```sql
+CREATE OR REPLACE VIEW public.v_leads_dss_pendientes AS
+SELECT
+  l.id, l.nombre, l.telefono,
+  l.zona_preferida, l.tipo_propiedad, l.presupuesto_max,
+  l.scl_score, l.dss_notas, l.dss_requisitos_cumplidos,
+  l.asignado_a,
+  l.ultima_interaccion AT TIME ZONE 'Europe/London' AS ultima_interaccion_london,
+  -- Alerta: ¿hay propiedad compatible disponible ahora?
+  EXISTS (
+    SELECT 1 FROM public.properties p
+    WHERE p.acepta_dss = TRUE
+      AND lower(p.zona) = lower(l.zona_preferida)
+      AND p.tipo = l.tipo_propiedad
+      AND l.presupuesto_max >= (p.precio_mensual * 0.85)::INTEGER
+      AND p.estado = 'available'
+  ) AS tiene_match_inmediato
+FROM public.leads l
+WHERE l.es_dss = TRUE
+  AND l.status NOT IN ('rechazado','perdido','contrato_firmado')
+ORDER BY 
+  tiene_match_inmediato DESC,  -- primero los que tienen match disponible HOY
+  l.scl_score DESC,
+  l.ultima_interaccion ASC;
+```
+
+### Vista `v_match_dss`:
+```sql
+CREATE OR REPLACE VIEW public.v_match_dss AS
+SELECT
+  l.id AS lead_id, l.nombre, l.telefono, l.zona_preferida,
+  l.tipo_propiedad, l.presupuesto_max, l.scl_score,
+  l.dss_requisitos_cumplidos, l.dss_notas,
+  p.id AS property_id, p.direccion, p.zona, p.tipo,
+  p.precio_mensual, p.acepta_dss, p.dss_requisitos,
+  p.disponible_desde
+FROM public.leads l
+JOIN public.properties p ON (
+  lower(l.zona_preferida) = lower(p.zona)
+  AND l.tipo_propiedad = p.tipo
+  AND l.presupuesto_max >= (p.precio_mensual * 0.85)::INTEGER
+  AND p.acepta_dss = TRUE
+  AND p.estado = 'available'
+)
+WHERE l.es_dss = TRUE
+  AND l.status NOT IN ('rechazado','perdido','contrato_firmado')
+ORDER BY l.scl_score DESC, p.precio_mensual ASC;
+```
+
+### Actualizar `v_daily_summary`:
+- Cambiar `leads_beneficio_pendientes` → `leads_dss_pendientes`
+- Usar `v_leads_dss_pendientes` para el conteo
+
+### Flujo de alerta en `pipelines/daily-report.lobster`:
+El step de DSS debe incluir lógica de alerta inmediata:
+```yaml
+- id: query_dss_leads
+  name: "Obtener leads DSS/UC con match disponible"
+  agent: alex
+  action: supabase_query
+  params:
+    view: v_leads_dss_pendientes
+    filter: "tiene_match_inmediato.eq.true"
+    order: "scl_score.desc"
+    limit: 10
+  alert_if_results: true
+  alert_message: "🏠 ALERTA DSS: {count} lead(s) DSS/UC tienen propiedad compatible disponible — contactar INMEDIATO"
+```
+
+### Actualizar agentes:
+- En todos los agentes (Ivy, Rose, Salo, Jeanette): usar `es_dss`, `dss_notas`, `dss_requisitos_cumplidos`
+- En `docs/SCORING.md`: sección de manejo DSS/UC con campos `es_dss`, `v_leads_dss_pendientes`, `v_match_dss`
+- En `docs/GUIA-LEADS-BENEFICIO.md`: renombrar a `docs/GUIA-LEADS-DSS.md` y usar términos DSS/UC internamente
+- En `shared/leads-uk.md`: sección "Leads DSS/UC" con query a `v_leads_dss_pendientes`
+- En `setup/context_loader.sh`: consultar `v_leads_dss_pendientes` en snapshot
+- En `pipelines/daily-report.lobster`: step `query_dss_leads` con alerta inmediata si `tiene_match_inmediato = true`
+
+### Resumen de nombres finales:
+
+| Elemento | Nombre en BD |
+|---|---|
+| Flag lead | `es_dss` |
+| Verificación | `dss_requisitos_cumplidos` |
+| Notas | `dss_notas` |
+| Flag propiedad | `acepta_dss` |
+| Requisitos propiedad | `dss_requisitos` |
+| Vista leads pendientes | `v_leads_dss_pendientes` |
+| Vista matching | `v_match_dss` |
+| Guía operativa | `docs/GUIA-LEADS-DSS.md` |
