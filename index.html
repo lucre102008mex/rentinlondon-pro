@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RentInLondon PRO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__overlay"></div>
+    <div class="hero__content">
+      <p class="badge">RentInLondon PRO</p>
+      <h1>Vivir en Londres nunca fue tan sencillo.</h1>
+      <p class="subtitle">Explora opciones curadas con datos confiables, visitas virtuales y soporte local dedicado.</p>
+      <form id="filters" class="filters">
+        <div class="field">
+          <label for="query">Zona o barrio</label>
+          <input id="query" name="query" type="text" placeholder="Shoreditch, Canary Wharf..." autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="bedrooms">Habitaciones</label>
+          <select id="bedrooms" name="bedrooms">
+            <option value="any">Cualquiera</option>
+            <option value="1">1+</option>
+            <option value="2">2+</option>
+            <option value="3">3+</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="price">Precio máximo (£/mes)</label>
+          <input id="price" name="price" type="number" min="500" step="100" placeholder="2500">
+        </div>
+        <button type="submit" class="button">Buscar</button>
+      </form>
+      <div id="results-summary" class="summary"></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="highlights">
+      <article class="highlight">
+        <h3>Verificación PRO</h3>
+        <p>Listado auditado, contratos claros y depósitos protegidos.</p>
+      </article>
+      <article class="highlight">
+        <h3>Traslados fáciles</h3>
+        <p>Check-in asistido, utilidades activadas y guías de barrio.</p>
+      </article>
+      <article class="highlight">
+        <h3>Soporte 24/7</h3>
+        <p>Equipo bilingüe listo para resolver incidencias en minutos.</p>
+      </article>
+    </section>
+
+    <section>
+      <div class="section-header">
+        <div>
+          <p class="badge badge--alt">Selección actual</p>
+          <h2>Propiedades recomendadas</h2>
+        </div>
+        <div class="legend">
+          <span class="pill">Disponible</span>
+          <span class="pill pill--soon">Próximo mes</span>
+        </div>
+      </div>
+      <div id="properties" class="grid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>
+      <strong>RentInLondon PRO</strong>
+      <p class="muted">Tu punto de partida para vivir en Londres con cero sorpresas.</p>
+    </div>
+    <div class="footer__links">
+      <a href="mailto:hola@rentinlondon.pro">Contacto</a>
+      <a href="#">Guía para expatriados</a>
+      <a href="#">Términos</a>
+    </div>
+  </footer>
+
+  <script src="./script.js"></script>
+</body>
+</html>
