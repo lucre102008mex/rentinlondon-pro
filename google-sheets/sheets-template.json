@@ -1,0 +1,293 @@
+{
+  "spreadsheet_name": "RentInLondon PRO — CRM",
+  "timezone": "Europe/London",
+  "sheets": [
+    {
+      "name": "Leads UK",
+      "description": "Leads del mercado de Reino Unido (es_internacional = FALSE)",
+      "headers": [
+        "ID",
+        "Nombre",
+        "Teléfono",
+        "Email",
+        "Canal Origen",
+        "Zona Preferida",
+        "Zonas Alternativas",
+        "Presupuesto Min (£)",
+        "Presupuesto Max (£)",
+        "Tipo Propiedad",
+        "Fecha Mudanza",
+        "Duración Contrato (meses)",
+        "Status",
+        "Pipeline Stage",
+        "Asignado A",
+        "Urgency Score (0-5)",
+        "Temperatura",
+        "Data Completeness",
+        "Budget Fit",
+        "Velocidad Respuesta (min)",
+        "Total Interacciones",
+        "Última Interacción (London)",
+        "Primer Contacto (London)",
+        "Horas Sin Contacto",
+        "Notas",
+        "UTM Source",
+        "UTM Campaign",
+        "Creado (London)"
+      ],
+      "source": "v_leads_activos",
+      "filter": "es_internacional = FALSE",
+      "order": "urgency_score DESC, ultima_interaccion ASC",
+      "frozen_rows": 1,
+      "conditional_formatting": [
+        {
+          "column": "Temperatura",
+          "rules": [
+            { "value": "HOT", "background": "#FF4444", "text": "#FFFFFF" },
+            { "value": "WARM", "background": "#FFAA00", "text": "#000000" },
+            { "value": "COLD", "background": "#4444FF", "text": "#FFFFFF" }
+          ]
+        },
+        {
+          "column": "Budget Fit",
+          "rules": [
+            { "value": "good", "background": "#00AA44", "text": "#FFFFFF" },
+            { "value": "maybe", "background": "#FFCC00", "text": "#000000" },
+            { "value": "poor", "background": "#FF6644", "text": "#FFFFFF" },
+            { "value": "unknown", "background": "#CCCCCC", "text": "#000000" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Leads Internacionales",
+      "description": "Leads internacionales (es_internacional = TRUE) — todos con Jeanette",
+      "headers": [
+        "ID",
+        "Nombre",
+        "Teléfono",
+        "Email",
+        "País Origen",
+        "Canal Origen",
+        "Zona Preferida",
+        "Presupuesto Max (£)",
+        "Tipo Propiedad",
+        "Fecha Mudanza",
+        "Status",
+        "Pipeline Stage",
+        "Urgency Score",
+        "Temperatura",
+        "Budget Fit",
+        "Escalado a Jeanette",
+        "Fecha Escalado",
+        "Motivo Escalado",
+        "Requiere R2R",
+        "Documentación Enviada",
+        "Total Interacciones",
+        "Última Interacción (London)",
+        "Notas",
+        "Creado (London)"
+      ],
+      "source": "v_leads_activos",
+      "filter": "es_internacional = TRUE",
+      "order": "urgency_score DESC, ultima_interaccion ASC",
+      "frozen_rows": 1
+    },
+    {
+      "name": "Propiedades",
+      "description": "Inventario completo de propiedades disponibles y alquiladas",
+      "headers": [
+        "ID",
+        "Dirección",
+        "Zona",
+        "Tipo",
+        "Precio Mensual (£)",
+        "Disponible Desde",
+        "Estado",
+        "Bills Incluidos",
+        "Depósito (semanas)",
+        "Min Contrato (meses)",
+        "Acepta Mascotas",
+        "Viewings Pendientes",
+        "Días Void",
+        "Rightmove ID",
+        "Zoopla ID",
+        "Gumtree ID",
+        "Descripción",
+        "Notas Internas",
+        "Creado"
+      ],
+      "source": "properties",
+      "order": "estado ASC, disponible_desde ASC",
+      "frozen_rows": 1,
+      "conditional_formatting": [
+        {
+          "column": "Estado",
+          "rules": [
+            { "value": "available", "background": "#00AA44", "text": "#FFFFFF" },
+            { "value": "void", "background": "#FF6644", "text": "#FFFFFF" },
+            { "value": "viewing", "background": "#FFAA00", "text": "#000000" },
+            { "value": "reserved", "background": "#4444FF", "text": "#FFFFFF" },
+            { "value": "let", "background": "#888888", "text": "#FFFFFF" },
+            { "value": "maintenance", "background": "#AA4400", "text": "#FFFFFF" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Viewings",
+      "description": "Visitas programadas y realizadas",
+      "headers": [
+        "ID",
+        "Lead Nombre",
+        "Lead Teléfono",
+        "Propiedad Dirección",
+        "Propiedad Zona",
+        "Precio (£/mes)",
+        "Agente",
+        "Fecha y Hora (London)",
+        "Tipo Viewing",
+        "Estado",
+        "Feedback del Lead",
+        "Notas",
+        "Video URL",
+        "Creado"
+      ],
+      "source": "viewings",
+      "join": [
+        { "table": "leads", "on": "lead_id", "select": "nombre as lead_nombre, telefono as lead_telefono" },
+        { "table": "properties", "on": "property_id", "select": "direccion, zona, precio_mensual" }
+      ],
+      "order": "fecha_hora DESC",
+      "frozen_rows": 1,
+      "conditional_formatting": [
+        {
+          "column": "Estado",
+          "rules": [
+            { "value": "confirmado", "background": "#00AA44", "text": "#FFFFFF" },
+            { "value": "programado", "background": "#FFAA00", "text": "#000000" },
+            { "value": "realizado", "background": "#888888", "text": "#FFFFFF" },
+            { "value": "cancelado_lead", "background": "#FF4444", "text": "#FFFFFF" },
+            { "value": "no_show", "background": "#AA0000", "text": "#FFFFFF" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Contratos",
+      "description": "Contratos de arrendamiento activos y firmados",
+      "headers": [
+        "ID",
+        "Lead Nombre",
+        "Propiedad Dirección",
+        "Propiedad Zona",
+        "Agente Cierre",
+        "Fecha Inicio",
+        "Fecha Fin",
+        "Precio Mensual (£)",
+        "Depósito Pagado (£)",
+        "Estado",
+        "Tipo Contrato",
+        "R2R Verificado",
+        "R2R Fecha Verificación",
+        "R2R Tipo Documento",
+        "R2R Expiry Date",
+        "Comisión Agencia (£)",
+        "Notas",
+        "Creado"
+      ],
+      "source": "contracts",
+      "join": [
+        { "table": "leads", "on": "lead_id", "select": "nombre as lead_nombre" },
+        { "table": "properties", "on": "property_id", "select": "direccion, zona" }
+      ],
+      "exclude_columns": ["contrato_url", "referencias_urls"],
+      "order": "fecha_inicio DESC",
+      "frozen_rows": 1,
+      "conditional_formatting": [
+        {
+          "column": "Estado",
+          "rules": [
+            { "value": "activo", "background": "#00AA44", "text": "#FFFFFF" },
+            { "value": "firmado", "background": "#0044AA", "text": "#FFFFFF" },
+            { "value": "enviado", "background": "#FFAA00", "text": "#000000" },
+            { "value": "borrador", "background": "#CCCCCC", "text": "#000000" },
+            { "value": "expirado", "background": "#FF6644", "text": "#FFFFFF" },
+            { "value": "cancelado", "background": "#AA0000", "text": "#FFFFFF" }
+          ]
+        },
+        {
+          "column": "R2R Verificado",
+          "rules": [
+            { "value": "true", "background": "#00AA44", "text": "#FFFFFF" },
+            { "value": "false", "background": "#FF4444", "text": "#FFFFFF" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ads Report",
+      "description": "Rendimiento de campañas FB/IG y listings en marketplaces",
+      "headers": [
+        "ID",
+        "Propiedad Dirección",
+        "Propiedad Zona",
+        "Plataforma",
+        "Listing ID Externo",
+        "URL",
+        "Estado",
+        "Vistas",
+        "Mensajes",
+        "Precio Listado (£)",
+        "Fecha Inicio",
+        "Fecha Fin",
+        "Costo (£)",
+        "CTR Estimado (%)",
+        "Leads Generados",
+        "CPL Estimado (£)",
+        "Actualizado"
+      ],
+      "source": "listings_history",
+      "join": [
+        { "table": "properties", "on": "property_id", "select": "direccion, zona" }
+      ],
+      "order": "updated_at DESC",
+      "frozen_rows": 1,
+      "conditional_formatting": [
+        {
+          "column": "Estado",
+          "rules": [
+            { "value": "activo", "background": "#00AA44", "text": "#FFFFFF" },
+            { "value": "pausado", "background": "#FFAA00", "text": "#000000" },
+            { "value": "expirado", "background": "#888888", "text": "#FFFFFF" },
+            { "value": "eliminado", "background": "#FF4444", "text": "#FFFFFF" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Weekly Summary",
+      "description": "Resúmenes semanales generados por Alex cada lunes",
+      "headers": [
+        "ID",
+        "Semana Inicio",
+        "Semana Fin",
+        "Leads Nuevos",
+        "Leads Contactados",
+        "Viewings Realizados",
+        "Contratos Firmados",
+        "Tasa Conversión (%)",
+        "Ingresos (£)",
+        "Costo Ads (£)",
+        "ROI Ads (%)",
+        "Tokens Totales",
+        "Resumen",
+        "Recomendaciones",
+        "Generado"
+      ],
+      "source": "weekly_summaries",
+      "order": "semana_inicio DESC",
+      "frozen_rows": 1
+    }
+  ]
+}

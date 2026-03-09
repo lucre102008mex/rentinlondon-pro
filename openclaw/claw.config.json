@@ -1,0 +1,163 @@
+{
+  "gateway": {
+    "name": "rentinlondon-pro",
+    "version": "1.0.0",
+    "timezone": "Europe/London"
+  },
+  "bindings": [
+    {
+      "agent": "alex",
+      "channel": "telegram",
+      "hooks": {
+        "on_message": "agents/alex/alex-identity.md",
+        "on_schedule": "pipelines/daily-report.lobster",
+        "on_error": "alert_owner"
+      },
+      "hmac": {
+        "enabled": false,
+        "comment": "Telegram usa su propio mecanismo de autenticación"
+      }
+    },
+    {
+      "agent": "ivy",
+      "channel": "whatsapp",
+      "hooks": {
+        "on_message": "agents/ivy/ivy-identity.md",
+        "on_lead_created": "log_interaction",
+        "on_escalate": "forward_to_jeanette"
+      },
+      "hmac": {
+        "enabled": true,
+        "header": "X-Signature",
+        "algorithm": "sha256",
+        "secret_env": "HMAC_SECRET"
+      },
+      "filters": {
+        "es_internacional": false,
+        "canal_origen": ["whatsapp"]
+      }
+    },
+    {
+      "agent": "rose",
+      "channel": "whatsapp",
+      "hooks": {
+        "on_message": "agents/rose/rose-identity.md",
+        "on_lead_created": "log_interaction",
+        "on_escalate": "forward_to_jeanette"
+      },
+      "hmac": {
+        "enabled": true,
+        "header": "X-Signature",
+        "algorithm": "sha256",
+        "secret_env": "HMAC_SECRET"
+      },
+      "filters": {
+        "es_internacional": false,
+        "canal_origen": ["facebook", "instagram"]
+      }
+    },
+    {
+      "agent": "salo",
+      "channel": "whatsapp",
+      "hooks": {
+        "on_message": "agents/salo/salo-identity.md",
+        "on_lead_created": "log_interaction",
+        "on_escalate": "forward_to_jeanette"
+      },
+      "hmac": {
+        "enabled": true,
+        "header": "X-Signature",
+        "algorithm": "sha256",
+        "secret_env": "HMAC_SECRET"
+      },
+      "filters": {
+        "es_internacional": false,
+        "canal_origen": ["gumtree", "rightmove", "zoopla", "spareroom", "openrent"]
+      }
+    },
+    {
+      "agent": "jeanette",
+      "channel": "whatsapp",
+      "hooks": {
+        "on_message": "agents/jeanette/jeanette-identity.md",
+        "on_lead_escalated": "accept_escalation",
+        "on_contract_signed": "notify_alex",
+        "on_r2r_completed": "update_contract"
+      },
+      "hmac": {
+        "enabled": true,
+        "header": "X-Signature",
+        "algorithm": "sha256",
+        "secret_env": "HMAC_SECRET"
+      },
+      "filters": {
+        "es_internacional_or_asignado": true
+      }
+    },
+    {
+      "agent": "ads-fb",
+      "channel": "webhook",
+      "hooks": {
+        "on_webhook": "agents/ads-fb/ads-fb-identity.md",
+        "on_lead_created": "derive_to_whatsapp_intake",
+        "on_schedule": "generate_ads_report"
+      },
+      "hmac": {
+        "enabled": true,
+        "header": "X-Hub-Signature-256",
+        "algorithm": "sha256",
+        "secret_env": "HMAC_SECRET"
+      },
+      "webhook_path": "/webhooks/facebook"
+    },
+    {
+      "agent": "ads-gumtree",
+      "channel": "webhook",
+      "hooks": {
+        "on_webhook": "agents/ads-gumtree/ads-gumtree-identity.md",
+        "on_lead_created": "derive_to_whatsapp_intake",
+        "on_schedule_refresh": "refresh_all_listings"
+      },
+      "hmac": {
+        "enabled": true,
+        "header": "X-Signature",
+        "algorithm": "sha256",
+        "secret_env": "HMAC_SECRET"
+      },
+      "webhook_path": "/webhooks/gumtree"
+    },
+    {
+      "agent": "script-runner",
+      "channel": "internal",
+      "hooks": {
+        "on_schedule": "run_scheduled_task",
+        "on_reactivation_prepared": "await_human_approval",
+        "on_approval_received": "send_reactivation_messages"
+      },
+      "hmac": {
+        "enabled": true,
+        "header": "X-Internal-Signature",
+        "algorithm": "sha256",
+        "secret_env": "HMAC_SECRET"
+      },
+      "restrictions": {
+        "no_external_channels": true,
+        "requires_approval_for_send": true
+      }
+    }
+  ],
+  "global_hooks": {
+    "before_any_action": "verify_hmac_if_external",
+    "after_any_action": "log_to_agent_logs",
+    "on_compliance_flag": "log_to_compliance_audit",
+    "on_error": "alert_alex_via_telegram",
+    "on_daily_limit_exceeded": "pause_agent_and_alert"
+  },
+  "sync_to_sheets": {
+    "enabled": true,
+    "edge_function_url": "${SUPABASE_URL}/functions/v1/sync-to-sheets",
+    "hmac_secret_env": "HMAC_SECRET",
+    "schedule": "0 */6 * * * Europe/London",
+    "tables": ["leads", "interactions", "properties", "viewings", "contracts", "listings_history", "weekly_summaries"]
+  }
+}

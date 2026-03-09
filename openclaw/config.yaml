@@ -1,0 +1,344 @@
+# =============================================================================
+# RentInLondon PRO — OpenClaw Gateway Configuration
+# 8 agentes en el mismo gateway
+# Nota: Los modelos de IA se configuran en las variables de entorno
+# =============================================================================
+
+gateway:
+  name: rentinlondon-pro
+  port: ${GATEWAY_PORT:-3000}
+  host: ${GATEWAY_HOST:-0.0.0.0}
+  timezone: Europe/London
+  log_level: ${LOG_LEVEL:-info}
+  log_file: ${LOG_DIR:-/var/log/rentinlondon}/${LOG_FILE:-agent.log}
+
+# ─── Configuración de base de datos ───────────────────────────────────────────
+database:
+  provider: supabase
+  url: ${SUPABASE_URL}
+  anon_key: ${SUPABASE_ANON_KEY}
+  service_role_key: ${SUPABASE_SERVICE_ROLE_KEY}
+
+# ─── Canales de comunicación compartidos ──────────────────────────────────────
+channels:
+  whatsapp:
+    provider: meta
+    api_url: ${WHATSAPP_API_URL}
+    token: ${WHATSAPP_TOKEN}
+    phone_id: ${WHATSAPP_PHONE_ID}
+    verify_token: ${WHATSAPP_VERIFY_TOKEN}
+    webhook_path: /webhooks/whatsapp
+  telegram:
+    provider: telegram
+    bot_token: ${TELEGRAM_BOT_TOKEN}
+    chat_id: ${TELEGRAM_CHAT_ID}
+    webhook_path: /webhooks/telegram
+  webhook:
+    hmac_secret: ${HMAC_SECRET}
+    header: X-Signature
+    algorithm: sha256
+    path: /webhooks/internal
+
+# =============================================================================
+# AGENTES PRINCIPALES
+# =============================================================================
+
+agents:
+
+  # ─── ALEX: Coordinador / Administrador ──────────────────────────────────────
+  - id: alex
+    name: Alex
+    role: coordinator
+    soul: agents/alex/alex-soul.md
+    identity: agents/alex/alex-identity.md
+    channel: telegram
+    active: true
+    # Nota: configurar LLM_MODEL_ALEX en .env para seleccionar el modelo
+    llm:
+      model: ${LLM_MODEL_ALEX:-gpt-4o}
+      temperature: 0.2
+      max_tokens: 4096
+    tools:
+      - supabase_read_all
+      - supabase_write_logs
+      - supabase_write_summaries
+      - telegram_send
+      - generate_report
+      - read_snapshot
+      - compliance_audit_read
+    schedule:
+      daily_report: "0 8 * * 1-5 Europe/London"
+      weekly_report: "0 9 * * 1 Europe/London"
+    rate_limits:
+      tokens_per_day: 20000
+      requests_per_hour: 100
+    db_role: alex_role
+    restrictions:
+      - cannot_contact_leads_directly
+      - cannot_modify_contracts
+
+  # ─── IVY: WhatsApp UK Intake y Nurturing ─────────────────────────────────────
+  - id: ivy
+    name: Ivy
+    role: intake_uk
+    soul: agents/ivy/ivy-soul.md
+    identity: agents/ivy/ivy-identity.md
+    channel: whatsapp
+    active: true
+    llm:
+      model: ${LLM_MODEL_IVY:-gpt-4o-mini}
+      temperature: 0.4
+      max_tokens: 2048
+    tools:
+      - whatsapp_send
+      - whatsapp_receive
+      - supabase_leads_uk_rw
+      - supabase_interactions_rw
+      - supabase_write_logs
+      - schedule_viewing
+      - escalate_to_jeanette
+    triggers:
+      - event: whatsapp.message.received
+        filter: "lead.canal_origen = 'whatsapp' AND lead.es_internacional = false"
+    rate_limits:
+      tokens_per_day: 30000
+      requests_per_hour: 200
+    db_role: ivy_role
+    restrictions:
+      - no_discriminatory_screening
+      - equality_act_2010_compliant
+
+  # ─── ROSE: WhatsApp UK Leads de Ads ──────────────────────────────────────────
+  - id: rose
+    name: Rose
+    role: ads_followup_uk
+    soul: agents/rose/rose-soul.md
+    identity: agents/rose/rose-identity.md
+    channel: whatsapp
+    active: true
+    llm:
+      model: ${LLM_MODEL_ROSE:-gpt-4o-mini}
+      temperature: 0.4
+      max_tokens: 2048
+    tools:
+      - whatsapp_send
+      - whatsapp_receive
+      - supabase_leads_ads_uk_rw
+      - supabase_interactions_rw
+      - supabase_write_logs
+      - schedule_viewing
+      - escalate_to_jeanette
+    triggers:
+      - event: lead.created
+        filter: "canal_origen IN ('facebook','instagram') AND es_internacional = false"
+    rate_limits:
+      tokens_per_day: 25000
+      requests_per_hour: 150
+    db_role: rose_role
+    restrictions:
+      - no_discriminatory_screening
+      - equality_act_2010_compliant
+
+  # ─── SALO: WhatsApp UK Marketplaces ──────────────────────────────────────────
+  - id: salo
+    name: Salo
+    role: marketplace_intake_uk
+    soul: agents/salo/salo-soul.md
+    identity: agents/salo/salo-identity.md
+    channel: whatsapp
+    active: true
+    llm:
+      model: ${LLM_MODEL_SALO:-gpt-4o-mini}
+      temperature: 0.3
+      max_tokens: 1024
+    tools:
+      - whatsapp_send
+      - whatsapp_receive
+      - supabase_leads_marketplace_uk_rw
+      - supabase_interactions_rw
+      - supabase_write_logs
+      - quick_qualify
+      - escalate_to_jeanette
+    triggers:
+      - event: lead.created
+        filter: "canal_origen IN ('gumtree','rightmove','zoopla','spareroom','openrent') AND es_internacional = false"
+    rate_limits:
+      tokens_per_day: 20000
+      requests_per_hour: 200
+    db_role: salo_role
+    restrictions:
+      - no_discriminatory_screening
+      - equality_act_2010_compliant
+      - fast_intake_only
+
+  # ─── JEANETTE: WhatsApp UK + Internacional ────────────────────────────────────
+  - id: jeanette
+    name: Jeanette
+    role: closing_uk_intl
+    soul: agents/jeanette/jeanette-soul.md
+    identity: agents/jeanette/jeanette-identity.md
+    channel: whatsapp
+    active: true
+    llm:
+      model: ${LLM_MODEL_JEANETTE:-gpt-4o}
+      temperature: 0.3
+      max_tokens: 4096
+    tools:
+      - whatsapp_send
+      - whatsapp_receive
+      - supabase_leads_intl_rw
+      - supabase_contracts_rw
+      - supabase_interactions_rw
+      - supabase_write_logs
+      - schedule_video_tour
+      - send_contract
+      - request_r2r_documents
+      - escalate_to_human
+    triggers:
+      - event: lead.escalated
+        filter: "escalado_jeanette = true"
+      - event: lead.created
+        filter: "es_internacional = true"
+    rate_limits:
+      tokens_per_day: 40000
+      requests_per_hour: 150
+    db_role: jeanette_role
+    restrictions:
+      - no_discriminatory_screening
+      - equality_act_2010_compliant
+      - requires_r2r_verification
+
+# =============================================================================
+# SUB-AGENTES (bajo consumo de tokens)
+# =============================================================================
+
+  # ─── ADS-FB: Facebook/Instagram Campaigns ────────────────────────────────────
+  - id: ads-fb
+    name: Ads-FB
+    role: facebook_ads_manager
+    soul: agents/ads-fb/ads-fb-soul.md
+    identity: agents/ads-fb/ads-fb-identity.md
+    channel: webhook
+    active: true
+    llm:
+      model: ${LLM_MODEL_ADSFB:-gpt-4o-mini}
+      temperature: 0.2
+      max_tokens: 1024
+    tools:
+      - facebook_ads_api_read
+      - supabase_leads_fb_insert
+      - supabase_write_logs
+      - derive_to_whatsapp
+      - generate_ads_report
+    triggers:
+      - event: facebook.lead.form_submitted
+      - event: facebook.message.received
+    schedule:
+      ads_report: "0 18 * * * Europe/London"
+    rate_limits:
+      tokens_per_day: 10000
+      requests_per_hour: 100
+    db_role: ads_fb_role
+    restrictions:
+      - no_contract_access
+      - no_direct_whatsapp_messaging
+      - insert_leads_facebook_only
+
+  # ─── ADS-GUMTREE: Gumtree/Marketplace Listings ───────────────────────────────
+  - id: ads-gumtree
+    name: Ads-Gumtree
+    role: marketplace_listings_manager
+    soul: agents/ads-gumtree/ads-gumtree-soul.md
+    identity: agents/ads-gumtree/ads-gumtree-identity.md
+    channel: webhook
+    active: true
+    llm:
+      model: ${LLM_MODEL_GUMTREE:-gpt-4o-mini}
+      temperature: 0.2
+      max_tokens: 1024
+    tools:
+      - gumtree_api
+      - rightmove_api_read
+      - zoopla_api_read
+      - supabase_leads_marketplace_insert
+      - supabase_listings_history_rw
+      - supabase_write_logs
+      - derive_to_whatsapp
+      - refresh_listing
+    schedule:
+      listings_refresh: "0 11 * * 1,4 Europe/London"
+      performance_report: "0 17 * * * Europe/London"
+    rate_limits:
+      tokens_per_day: 8000
+      requests_per_hour: 80
+    db_role: ads_gumtree_role
+    restrictions:
+      - no_contract_access
+      - no_direct_whatsapp_messaging
+      - insert_leads_marketplace_only
+
+  # ─── SCRIPT-RUNNER: Tareas Internas ──────────────────────────────────────────
+  - id: script-runner
+    name: Script-Runner
+    role: internal_automation
+    soul: agents/script-runner/script-runner-soul.md
+    identity: agents/script-runner/script-runner-identity.md
+    channel: internal
+    active: true
+    llm:
+      model: ${LLM_MODEL_SCRIPTS:-gpt-4o-mini}
+      temperature: 0.1
+      max_tokens: 2048
+    tools:
+      - supabase_read_views
+      - supabase_leads_update_status
+      - supabase_write_logs
+      - normalize_data
+      - prepare_reactivation_messages
+      - validate_data_completeness
+      - refresh_scoring
+    schedule:
+      dormant_reactivation: "0 10 * * 3 Europe/London"
+      data_normalization: "0 3 * * * Europe/London"
+      score_refresh: "0 6 * * * Europe/London"
+    rate_limits:
+      tokens_per_day: 15000
+      requests_per_hour: 50
+    db_role: script_runner_role
+    restrictions:
+      - no_external_channel_access
+      - no_contract_access
+      - no_send_without_approval
+      - reactivation_requires_human_approval
+
+# =============================================================================
+# CONFIGURACIÓN GLOBAL
+# =============================================================================
+
+global:
+  compliance:
+    framework: UK_Equality_Act_2010
+    excluded_attributes:
+      - age
+      - disability
+      - gender_reassignment
+      - marriage_civil_partnership
+      - pregnancy_maternity
+      - race
+      - religion_belief
+      - sex
+      - sexual_orientation
+    audit_all_decisions: true
+    audit_table: compliance_audit
+
+  security:
+    hmac_algorithm: sha256
+    hmac_header: X-Signature
+    jwt_expiry: 3600
+    env_file_permissions: "600"
+
+  monitoring:
+    daily_token_limit: ${DAILY_TOKEN_LIMIT:-100000}
+    daily_cost_limit_gbp: ${DAILY_COST_LIMIT_GBP:-50}
+    alert_channel: telegram
+    alert_recipient: ${TELEGRAM_CHAT_ID}
