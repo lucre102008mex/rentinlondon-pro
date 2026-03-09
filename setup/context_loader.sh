@@ -156,7 +156,14 @@ content = "\n".join(lines)
 with open("$SNAP_FILE", "w") as f:
     f.write(content)
 
-print(content[:500])
+leads_count = len(activos)
+void_count = len(void_props)
+dormantes_count = len(dormantes)
+print(f"Resumen del snapshot:")
+print(f"  Leads activos incluidos : {leads_count}")
+print(f"  Propiedades void        : {void_count}")
+print(f"  Leads dormantes         : {dormantes_count}")
+print(f"  Total líneas generadas  : {len(lines)}")
 print(f"\n[Snapshot guardado en: $SNAP_FILE]")
 PYEOF
 

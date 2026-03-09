@@ -121,7 +121,7 @@ AllowAgentForwarding no
 X11Forwarding no
 EOF
 
-systemctl reload sshd || sshd -t && systemctl reload ssh
+systemctl reload sshd || (sshd -t && systemctl reload ssh)
 success "SSH hardening aplicado"
 
 # ─── 7. Configurar sysctl para seguridad de red ───────────────────────────────

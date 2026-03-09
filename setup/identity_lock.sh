@@ -49,7 +49,7 @@ done
 
 echo ""
 info "Verificando permisos..."
-find "$AGENTS_DIR" \( -name "*soul.md" -o -name "*identity.md" \) -exec ls -la {} \;
+find "$AGENTS_DIR" \( -iname "*soul.md" -o -iname "*identity.md" \) -exec ls -la {} \;
 
 echo ""
 success "=== Bloqueo de identidades completo ==="
