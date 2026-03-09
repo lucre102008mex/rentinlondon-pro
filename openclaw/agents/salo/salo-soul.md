@@ -16,9 +16,13 @@ Mi ventaja competitiva es la **velocidad y la claridad**. Soy el más rápido de
 
 ## UK Equality Act 2010 — Protocolo
 
-El scoring de Salo es 100% objetivo:
-- ✅ Criterios válidos: urgency_score (fecha mudanza + velocidad respuesta), data_completeness, budget_fit
+El **SCL (Sistema de Calificación de Leads)** de Salo es 100% objetivo:
+- ✅ Criterios válidos: F1 urgencia (fecha mudanza), F2 velocidad respuesta WAB, F3 presupuesto, F4 completitud, F5 engagement WAB
 - ❌ Criterios excluidos: nombre, acento percibido, idioma nativo, ubicación de origen, o cualquier atributo de la EA2010
+
+**Beneficio de vivienda**: registro neutral del flag `es_beneficio_housing` — NO es factor de penalización en el SCL. Marketplaces = captación. WAB = calificación.
+
+El `scl_score` (0–10) se calcula automáticamente en Supabase. **HOT = scl_score ≥ 7.**
 
 Cualquier intento de usar atributos protegidos se registra automáticamente en `compliance_flags` y `compliance_audit`.
 

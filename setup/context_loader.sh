@@ -50,13 +50,16 @@ info "Consultando v_daily_summary..."
 DAILY_SUMMARY=$(supabase_query "v_daily_summary" "?limit=1")
 
 info "Consultando v_leads_activos..."
-LEADS_ACTIVOS=$(supabase_query "v_leads_activos" "?limit=50&order=urgency_score.desc")
+LEADS_ACTIVOS=$(supabase_query "v_leads_activos" "?limit=50&order=scl_score.desc")
 
 info "Consultando v_propiedades_void..."
 PROPS_VOID=$(supabase_query "v_propiedades_void" "?limit=20")
 
 info "Consultando v_leads_dormantes..."
 LEADS_DORMANTES=$(supabase_query "v_leads_dormantes" "?limit=20")
+
+info "Consultando v_leads_beneficio_pendientes..."
+LEADS_BENEFICIO=$(supabase_query "v_leads_beneficio_pendientes" "?limit=20")
 
 # ─── Parsear con Python ───────────────────────────────────────────────────────
 python3 << PYEOF
@@ -75,6 +78,7 @@ daily = safe_json('''$DAILY_SUMMARY''')
 activos = safe_json('''$LEADS_ACTIVOS''')
 void_props = safe_json('''$PROPS_VOID''')
 dormantes = safe_json('''$LEADS_DORMANTES''')
+beneficio = safe_json('''$LEADS_BENEFICIO''')
 
 d = daily[0] if daily else {}
 
@@ -91,9 +95,10 @@ lines = [
     f"|---------|-------|",
     f"| Leads nuevos hoy | {d.get('leads_nuevos_hoy', 'N/A')} |",
     f"| Leads activos total | {d.get('leads_activos_total', 'N/A')} |",
-    f"| Leads hot (score 4-5) | {d.get('leads_hot', 'N/A')} |",
-    f"| Leads warm (score 2-3) | {d.get('leads_warm', 'N/A')} |",
-    f"| Leads cold (score 0-1) | {d.get('leads_cold', 'N/A')} |",
+    f"| Leads hot (scl_score 7-10) | {d.get('leads_hot', 'N/A')} |",
+    f"| Leads warm (scl_score 4-6) | {d.get('leads_warm', 'N/A')} |",
+    f"| Leads cold (scl_score 0-3) | {d.get('leads_cold', 'N/A')} |",
+    f"| Leads beneficio pendientes | {d.get('leads_beneficio_pendientes', 'N/A')} |",
     f"| Leads internacionales | {d.get('leads_internacionales', 'N/A')} |",
     f"| Viewings hoy | {d.get('viewings_hoy', 'N/A')} |",
     f"| Contratos activos | {d.get('contratos_activos', 'N/A')} |",
@@ -101,16 +106,16 @@ lines = [
     "",
     "---",
     "",
-    "## Leads Activos (Top 20 por urgency_score)",
+    "## Leads Activos (Top 20 por scl_score)",
     "",
-    "| Nombre | Zona | Presupuesto | Score | Budget Fit | Asignado a |",
-    "|--------|------|-------------|-------|------------|------------|",
+    "| Nombre | Zona | Presupuesto | SCL Score | Budget Fit | Asignado a |",
+    "|--------|------|-------------|-----------|------------|------------|",
 ]
 
 for l in activos[:20]:
     lines.append(
         f"| {l.get('nombre','?')} | {l.get('zona_preferida','?')} | "
-        f"£{l.get('presupuesto_max',0):,} | {l.get('urgency_score','?')} | "
+        f"£{l.get('presupuesto_max',0):,} | {l.get('scl_score','?')} | "
         f"{l.get('budget_fit','?')} | {l.get('asignado_a','?')} |"
     )
 
@@ -136,13 +141,29 @@ lines += [
     "",
     "## Leads Dormantes (sin contacto 7+ días)",
     "",
-    "| Nombre | Último contacto | Score | Asignado a |",
-    "|--------|-----------------|-------|------------|",
+    "| Nombre | Último contacto | SCL Score | Asignado a |",
+    "|--------|-----------------|-----------|------------|",
 ]
 for l in dormantes[:10]:
     lines.append(
         f"| {l.get('nombre','?')} | {l.get('ultima_interaccion','?')} | "
-        f"{l.get('urgency_score','?')} | {l.get('asignado_a','?')} |"
+        f"{l.get('scl_score','?')} | {l.get('asignado_a','?')} |"
+    )
+
+lines += [
+    "",
+    "---",
+    "",
+    "## Leads con Beneficio de Vivienda — Verificación Pendiente",
+    "",
+    "| Nombre | Zona | Presupuesto | SCL Score | Asignado a |",
+    "|--------|------|-------------|-----------|------------|",
+]
+for l in beneficio[:10]:
+    lines.append(
+        f"| {l.get('nombre','?')} | {l.get('zona_preferida','?')} | "
+        f"£{l.get('presupuesto_max',0):,} | {l.get('scl_score','?')} | "
+        f"{l.get('asignado_a','?')} |"
     )
 
 lines += [
@@ -159,11 +180,13 @@ with open("$SNAP_FILE", "w") as f:
 leads_count = len(activos)
 void_count = len(void_props)
 dormantes_count = len(dormantes)
+beneficio_count = len(beneficio)
 print(f"Resumen del snapshot:")
-print(f"  Leads activos incluidos : {leads_count}")
-print(f"  Propiedades void        : {void_count}")
-print(f"  Leads dormantes         : {dormantes_count}")
-print(f"  Total líneas generadas  : {len(lines)}")
+print(f"  Leads activos incluidos      : {leads_count}")
+print(f"  Propiedades void             : {void_count}")
+print(f"  Leads dormantes              : {dormantes_count}")
+print(f"  Leads beneficio pendientes   : {beneficio_count}")
+print(f"  Total líneas generadas       : {len(lines)}")
 print(f"\n[Snapshot guardado en: $SNAP_FILE]")
 PYEOF
 

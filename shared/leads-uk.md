@@ -36,14 +36,27 @@
 | Poor (presupuesto bajo) | — | — |
 | Unknown (sin datos de zona) | — | — |
 
-## Leads HOT (urgency_score 4-5)
+## Leads HOT (scl_score 7-10)
 
 Consultar en tiempo real:
 ```sql
-SELECT nombre, zona_preferida, presupuesto_max, urgency_score, asignado_a
+SELECT nombre, zona_preferida, presupuesto_max, scl_score, asignado_a
 FROM v_leads_activos
-WHERE urgency_score >= 4
-ORDER BY urgency_score DESC, ultima_interaccion ASC;
+WHERE scl_score >= 7
+ORDER BY scl_score DESC, ultima_interaccion ASC;
+```
+
+## Leads con Beneficio de Vivienda
+
+| Categoría | Leads | Propiedades compatibles |
+|-----------|-------|------------------------|
+| Requisitos cumplidos | — | — |
+| Pendiente verificación | — | — |
+| Ingresos estándar | — | — |
+
+Leads pendientes de verificación de requisitos:
+```sql
+SELECT * FROM v_leads_beneficio_pendientes;
 ```
 
 ## Notas de Mercado
