@@ -126,6 +126,7 @@ rentinlondon-pro/
 │   ├── leads-intl-flag.md
 │   ├── ads-report.md
 │   └── log.md
+|   ├── memory.md 
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── COMPLIANCE.md
