@@ -9,7 +9,9 @@
 -- 1a. Modificar tabla `leads`
 -- -----------------------------------------------------------------------------
 
--- Ampliar rango de urgency_score a 0-10 para compatibilidad
+-- Ampliar rango de urgency_score a 0-10 para compatibilidad con la escala SCL.
+-- NOTA: urgency_score queda en la tabla por compatibilidad con datos históricos.
+-- El campo principal del SCL es scl_score. urgency_score se considera deprecado.
 ALTER TABLE public.leads DROP CONSTRAINT IF EXISTS leads_urgency_score_check;
 ALTER TABLE public.leads ADD CONSTRAINT leads_urgency_score_check CHECK (urgency_score BETWEEN 0 AND 10);
 
@@ -173,7 +175,7 @@ FROM public.leads l
 JOIN public.properties p ON (
   lower(l.zona_preferida) = lower(p.zona)
   AND l.tipo_propiedad = p.tipo
-  AND l.presupuesto_max >= (p.precio_mensual * 0.85)::INTEGER
+  AND l.presupuesto_max >= (p.precio_mensual * 0.85)::INTEGER  -- margen del 15%: presupuesto cubre al menos el 85% del precio
   AND p.acepta_beneficio_housing = TRUE
   AND p.estado = 'available'
 )
