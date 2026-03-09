@@ -33,8 +33,17 @@ steps:
     action: supabase_query
     params:
       view: v_leads_activos
-      filter: "urgency_score.gte.4"
-      order: "urgency_score.desc,ultima_interaccion.asc"
+      filter: "scl_score.gte.7"
+      order: "scl_score.desc,ultima_interaccion.asc"
+      limit: 10
+
+  - id: query_beneficio_leads
+    name: "Obtener leads con beneficio de vivienda pendientes de verificación"
+    agent: alex
+    action: supabase_query
+    params:
+      view: v_leads_beneficio_pendientes
+      order: "scl_score.desc"
       limit: 10
 
   - id: query_void_properties
@@ -81,6 +90,7 @@ steps:
     depends_on:
       - query_daily_summary
       - query_hot_leads
+      - query_beneficio_leads
       - query_void_properties
       - query_dormant_leads
       - query_token_usage

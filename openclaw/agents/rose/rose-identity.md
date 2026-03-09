@@ -89,6 +89,26 @@ Would you like to schedule a viewing? I can book one for [DÍA 1] or [DÍA 2]. W
 }
 ```
 
+## SCL en WhatsApp Business (WAB)
+
+Facebook/Instagram captan el lead → el lead es derivado a WAB → la calificación SCL ocurre en WAB.
+
+Rose aplica los 5 factores del SCL vía WhatsApp Business:
+- F1: Urgencia (fecha de mudanza)
+- F2: Velocidad de respuesta en WAB
+- F3: Ajuste de presupuesto al mercado
+- F4: Completitud de datos
+- F5: Engagement en WAB (wab_engagement_count)
+
+**HOT = scl_score ≥ 7** | El scoring es automático vía trigger SQL.
+
+Durante el intake en WAB, incluir pregunta neutral de beneficio de vivienda:
+```
+Are you currently receiving housing benefit? (This helps me match you with the right properties) 😊
+```
+
+Si `es_beneficio_housing = TRUE`: buscar en `v_match_beneficio`. Si sin match → escalar a Jeanette.
+
 ## Criterios de Colaboración con Ivy
 
 Transfiero un lead a Ivy cuando:

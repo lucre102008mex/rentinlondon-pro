@@ -9,6 +9,44 @@ Al recibir escalado de otro agente o lead internacional nuevo:
 4. Confirmar propiedad de interés en `properties` (estado, precio, disponibilidad)
 5. Iniciar secuencia de cierre apropiada
 
+## Verificación de Requisitos — Leads con Beneficio de Vivienda
+
+Cuando un lead tiene `es_beneficio_housing = TRUE`, Jeanette gestiona la verificación de requisitos del landlord antes del cierre.
+
+### Checklist de Verificación
+
+- [ ] **Garantor**: nombre completo, relación con el lead, ingresos anuales verificables (mínimo 30x renta mensual)
+- [ ] **Meses de renta adelantada**: confirmar cantidad requerida por el landlord y disponibilidad del lead
+- [ ] **Carta oficial**: carta del organismo de vivienda confirmando importe y regularidad del pago
+- [ ] **Carta del empleador**: si el lead cambió recientemente de situación laboral
+- [ ] **Historial de alquiler**: referencias de alquileres previos sin incidencias (si aplica)
+
+### Registro del Upgrade
+
+Si el lead cumple todos los requisitos:
+
+```sql
+UPDATE leads
+SET
+  beneficio_requisitos_cumplidos = TRUE,
+  beneficio_notas = '[Descripción de los requisitos cumplidos y fecha de verificación]'
+WHERE id = '[lead_id]';
+```
+
+### Consulta de Propiedades Compatibles
+
+```sql
+SELECT * FROM v_match_beneficio WHERE lead_id = '[lead_id]';
+```
+
+Esta vista cruza el perfil del lead (zona, tipo, presupuesto) con propiedades que tienen `acepta_beneficio_housing = TRUE`.
+
+### SCL y Temperatura
+
+- `scl_score` escala 0–10 calculado automáticamente (F1–F5)
+- **HOT = scl_score ≥ 7** → proponer viewing inmediato
+- El `es_beneficio_housing` NO afecta el scl_score — es solo flag de matching
+
 ## Flujo: Lead UK en Etapa de Cierre
 
 ```

@@ -16,9 +16,10 @@ Al iniciar sesión, siempre ejecuto este protocolo:
 📅 [DÍA, DD/MM/YYYY] | 🕗 8:00 AM London
 
 ━━━ LEADS ━━━━━━━━━━━━━━━━━━━━━━━━
-🔴 HOT (score 4-5): [N] leads
-🟡 WARM (score 2-3): [N] leads
-🔵 COLD (score 0-1): [N] leads
+🔴 HOT (scl_score 7-10): [N] leads
+🟡 WARM (scl_score 4-6): [N] leads
+🔵 COLD (scl_score 0-3): [N] leads
+🏠 Beneficio pendientes (req. verificación): [N]
 🌍 Internacionales: [N]
 📥 Nuevos hoy: [N]
 😴 Dormidos (7d+): [N]
@@ -99,6 +100,7 @@ Resolución: [estado]
 3. **Token limit >80%** → alerta preventiva; >100% → pausa y alerta urgente
 4. **Flag de compliance** → alerta inmediata al dueño con contexto completo
 5. **Contrato a vencer en 30 días** → alerta al dueño para gestión
+6. **Leads con `es_beneficio_housing = TRUE` y `beneficio_requisitos_cumplidos = FALSE` sin seguimiento en 48h** → ping a Jeanette
 
 ## Política de Datos
 

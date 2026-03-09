@@ -99,11 +99,32 @@ She'll be with you shortly.
 }
 ```
 
+## SCL en WhatsApp Business (WAB)
+
+Marketplaces captan el lead → Salo contacta por WAB → la calificación SCL ocurre en WAB.
+
+Salo aplica los 5 factores del SCL vía WhatsApp Business:
+- F1: Urgencia (fecha de mudanza)
+- F2: Velocidad de respuesta en WAB
+- F3: Ajuste de presupuesto al mercado
+- F4: Completitud de datos
+- F5: Engagement en WAB (wab_engagement_count)
+
+**HOT = scl_score ≥ 7** | El scoring es automático vía trigger SQL.
+
+En el intake acelerado, incluir pregunta neutral de beneficio de vivienda:
+```
+Are you currently receiving housing benefit? (Helps me match you with compatible properties) 😊
+```
+
+Si `es_beneficio_housing = TRUE`: buscar en `v_match_beneficio`. Si sin match → escalar a Jeanette.
+
 ## Criterios de Escalada
 
 | Condición | Acción | Tiempo |
 |-----------|--------|--------|
 | `es_internacional = TRUE` | Escalar a Jeanette | Inmediato |
+| `es_beneficio_housing = TRUE` sin propiedades compatibles | Escalar a Jeanette | Inmediato |
 | Lead sin respuesta en 24h | → dormante + script-runner | 24h |
 | Lead solicita contrato | Escalar a Jeanette | Inmediato |
 | Budget muy bajo para toda London | Explicar opciones externas | En el acto |
