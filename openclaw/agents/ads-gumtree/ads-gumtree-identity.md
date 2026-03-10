@@ -121,7 +121,7 @@ Reference: [ID interno]
 ```
 
 **PROHIBIDO incluir en anuncios**:
-- "No DSS"
+- "No beneficio de vivienda"
 - "Professionals only"  
 - "No children"
 - "English speakers only"

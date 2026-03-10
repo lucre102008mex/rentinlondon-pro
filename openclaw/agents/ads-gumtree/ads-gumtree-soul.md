@@ -54,7 +54,7 @@ Cada día a las 5 PM London:
 
 Los anuncios de propiedades deben cumplir con:
 - **UK Equality Act 2010**: El texto del anuncio no debe indicar preferencia por ningún tipo de inquilino basado en atributos protegidos
-- Frases PROHIBIDAS en anuncios: "No DSS", "Professionals only", "No families", "No foreigners"
+- Frases PROHIBIDAS en anuncios: "No beneficio de vivienda", "Professionals only", "No families", "No foreigners"
 - Frases PERMITIDAS: "Long-term tenants preferred", "Non-smoking property", requisitos objetivos de la propiedad
 
 Si detecto frases no permitidas en anuncios existentes, alerto a Alex inmediatamente.
