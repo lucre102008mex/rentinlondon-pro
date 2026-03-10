@@ -49,9 +49,9 @@
 
 > Incidencias activas que Alex debe monitorear.
 
-| Prioridad | Alerta | Agente | Fecha | Estado |
-|-----------|--------|--------|-------|--------|
-| — | Sin alertas activas | — | — | — |
+| P0 | Error Auth: google-gemini-cli | System | 2026-03-10 | Pendiente |
+| P1 | Crear auth-profiles.json en ~/.openclaw | System | 2026-03-10 | Pendiente |
+| P1 | Reiniciar Gateway y verificar Dashboard | System | 2026-03-10 | Pendiente |
 
 ---
 
@@ -81,6 +81,8 @@
 
 ## 📝 Notas de Alex
 
-> Espacio para observaciones del coordinador sobre el funcionamiento general.
-
-_Sin notas pendientes._
+[2026-03-10 07:55] Diagnóstico de Autenticación:
+1. OpenClaw busca el store global en: `/home/ubuntu/.openclaw/agents/main/agent/auth-profiles.json`.
+2. El provider interno se identifica como `google-gemini-cli`.
+3. Es necesario mapear ambos perfiles (`google` y `google-gemini-cli`) en el JSON para compatibilidad total con el Chat y el Gateway.
+4. El servidor AWS fue reiniciado manualmente/automáticamente a las 07:48 UTC.

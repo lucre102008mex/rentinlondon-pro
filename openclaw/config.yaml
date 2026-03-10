@@ -68,7 +68,7 @@ agents:
       - read_workspace_memory    # Lee shared/memory.md — memoria central
       - write_workspace_memory   # Escribe en shared/memory.md — solo Alex
     heartbeat:
-      interval: 30m
+      interval: 60m
     schedule:
       daily_report: "0 8 * * 1-5 Europe/London"
       weekly_report: "0 9 * * 1 Europe/London"
@@ -107,7 +107,7 @@ agents:
       - report_to_alex          # Envía resumen de leads y citas a Alex vía internal
       - read_workspace_memory   # Lee shared/memory.md — memoria central (solo lectura)
     heartbeat:
-      interval: 30m
+      interval: 60m
     triggers:
       - event: whatsapp.message.received
         filter: "lead.canal_origen = 'whatsapp' AND lead.es_internacional = false"
@@ -146,7 +146,7 @@ agents:
       - report_to_alex          # Envía resumen de leads y citas a Alex vía internal
       - read_workspace_memory   # Lee shared/memory.md — memoria central (solo lectura)
     heartbeat:
-      interval: 30m
+      interval: 60m
     triggers:
       - event: lead.created
         filter: "canal_origen IN ('facebook','instagram') AND es_internacional = false"
@@ -185,7 +185,7 @@ agents:
       - report_to_alex          # Envía resumen de leads y citas a Alex vía internal
       - read_workspace_memory   # Lee shared/memory.md — memoria central (solo lectura)
     heartbeat:
-      interval: 30m
+      interval: 60m
     triggers:
       - event: lead.created
         filter: "canal_origen IN ('gumtree','rightmove','zoopla','spareroom','openrent') AND es_internacional = false"
@@ -205,7 +205,7 @@ agents:
     soul: agents/jeanette/jeanette-soul.md
     identity: agents/jeanette/jeanette-identity.md
     channel: whatsapp
-    active: true
+    active: false
     llm:
       model: ${LLM_MODEL_JEANETTE:-google/gemini-2.5-flash-lite}
       api_key: ${GEMINI_API_KEY_JEANETTE}
@@ -228,7 +228,7 @@ agents:
       - report_to_alex          # Envía resumen de leads, citas y contratos a Alex vía internal
       - read_workspace_memory   # Lee shared/memory.md — memoria central (solo lectura)
     heartbeat:
-      interval: 30m
+      interval: 60m
     triggers:
       - event: lead.escalated
         filter: "escalado_jeanette = true"
