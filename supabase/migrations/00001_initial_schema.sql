@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS public.properties (
   bills_incluidos   BOOLEAN DEFAULT FALSE,
   deposito_semanas  SMALLINT DEFAULT 5 CHECK (deposito_semanas BETWEEN 1 AND 8),
   min_contrato_meses SMALLINT DEFAULT 6,
-  acepta_dss        BOOLEAN DEFAULT FALSE,
+  acepta_beneficio_housing BOOLEAN DEFAULT FALSE,
   acepta_mascotas   BOOLEAN DEFAULT FALSE,
   geolocalizacion   JSONB DEFAULT '{}'::JSONB,
   rightmove_id      TEXT,
@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS public.properties (
   notas_internas    TEXT
 );
 
-COMMENT ON TABLE public.properties IS 'Propiedades disponibles para arrendar. acepta_dss y acepta_mascotas son características objetivas de la propiedad, no criterios de discriminación de personas.';
+COMMENT ON TABLE public.properties IS 'Propiedades disponibles para arrendar. acepta_beneficio_housing y acepta_mascotas son características objetivas de la propiedad, no criterios de discriminación de personas.';
 
 -- =============================================================================
 -- TABLA: viewings

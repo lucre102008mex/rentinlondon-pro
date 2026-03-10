@@ -51,7 +51,7 @@ El sistema RentInLondon PRO nunca usa las siguientes características en ninguna
 Los siguientes términos y frases están PROHIBIDOS en cualquier comunicación del sistema:
 
 ```
-"No DSS"
+"No housing benefit"
 "No benefits"
 "Working professionals only"
 "No families"
