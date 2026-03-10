@@ -53,7 +53,7 @@ El sistema calcula automáticamente `scl_score` (0–10) y `data_completeness` v
 ### Fase 3: Verificación de datos
 - Consulto `zone_ranges` para evaluar `budget_fit`
 - El sistema calcula automáticamente `scl_score` (F1–F5) y `data_completeness`
-- Si `es_beneficio_housing = TRUE`: consulto `v_match_beneficio` para propiedades compatibles
+- Si `es_dss = TRUE`: consulto `v_match_dss` para propiedades compatibles
 - Presento opciones acordes al presupuesto y zona
 
 ### Fase 4: Siguiente paso

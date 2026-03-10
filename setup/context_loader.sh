@@ -58,8 +58,8 @@ PROPS_VOID=$(supabase_query "v_propiedades_void" "?limit=20")
 info "Consultando v_leads_dormantes..."
 LEADS_DORMANTES=$(supabase_query "v_leads_dormantes" "?limit=20")
 
-info "Consultando v_leads_beneficio_pendientes..."
-LEADS_BENEFICIO=$(supabase_query "v_leads_beneficio_pendientes" "?limit=20")
+info "Consultando v_leads_dss_pendientes..."
+LEADS_DSS=$(supabase_query "v_leads_dss_pendientes" "?limit=20")
 
 # ─── Parsear con Python ───────────────────────────────────────────────────────
 python3 << PYEOF
@@ -78,7 +78,7 @@ daily = safe_json('''$DAILY_SUMMARY''')
 activos = safe_json('''$LEADS_ACTIVOS''')
 void_props = safe_json('''$PROPS_VOID''')
 dormantes = safe_json('''$LEADS_DORMANTES''')
-beneficio = safe_json('''$LEADS_BENEFICIO''')
+dss = safe_json('''$LEADS_DSS''')
 
 d = daily[0] if daily else {}
 
@@ -98,7 +98,7 @@ lines = [
     f"| Leads hot (scl_score 7-10) | {d.get('leads_hot', 'N/A')} |",
     f"| Leads warm (scl_score 4-6) | {d.get('leads_warm', 'N/A')} |",
     f"| Leads cold (scl_score 0-3) | {d.get('leads_cold', 'N/A')} |",
-    f"| Leads beneficio pendientes | {d.get('leads_beneficio_pendientes', 'N/A')} |",
+    f"| Leads DSS pendientes | {d.get('leads_dss_pendientes', 'N/A')} |",
     f"| Leads internacionales | {d.get('leads_internacionales', 'N/A')} |",
     f"| Viewings hoy | {d.get('viewings_hoy', 'N/A')} |",
     f"| Contratos activos | {d.get('contratos_activos', 'N/A')} |",
@@ -154,12 +154,12 @@ lines += [
     "",
     "---",
     "",
-    "## Leads con Beneficio de Vivienda — Verificación Pendiente",
+    "## Leads DSS/UC — Verificación y Match Inmediato",
     "",
     "| Nombre | Zona | Presupuesto | SCL Score | Asignado a |",
     "|--------|------|-------------|-----------|------------|",
 ]
-for l in beneficio[:10]:
+for l in dss[:10]:
     lines.append(
         f"| {l.get('nombre','?')} | {l.get('zona_preferida','?')} | "
         f"£{l.get('presupuesto_max',0):,} | {l.get('scl_score','?')} | "
@@ -180,12 +180,12 @@ with open("$SNAP_FILE", "w") as f:
 leads_count = len(activos)
 void_count = len(void_props)
 dormantes_count = len(dormantes)
-beneficio_count = len(beneficio)
+dss_count = len(dss)
 print(f"Resumen del snapshot:")
 print(f"  Leads activos incluidos      : {leads_count}")
 print(f"  Propiedades void             : {void_count}")
 print(f"  Leads dormantes              : {dormantes_count}")
-print(f"  Leads beneficio pendientes   : {beneficio_count}")
+print(f"  Leads DSS pendientes         : {dss_count}")
 print(f"  Total líneas generadas       : {len(lines)}")
 print(f"\n[Snapshot guardado en: $SNAP_FILE]")
 PYEOF

@@ -11,7 +11,7 @@ Al recibir escalado de otro agente o lead internacional nuevo:
 
 ## Verificación de Requisitos — Leads con Beneficio de Vivienda
 
-Cuando un lead tiene `es_beneficio_housing = TRUE`, Jeanette gestiona la verificación de requisitos del landlord antes del cierre.
+Cuando un lead tiene `es_dss = TRUE`, Jeanette gestiona la verificación de requisitos del landlord antes del cierre.
 
 ### Checklist de Verificación
 
@@ -28,24 +28,24 @@ Si el lead cumple todos los requisitos:
 ```sql
 UPDATE leads
 SET
-  beneficio_requisitos_cumplidos = TRUE,
-  beneficio_notas = '[Descripción de los requisitos cumplidos y fecha de verificación]'
+  dss_requisitos_cumplidos = TRUE,
+  dss_notas = '[Descripción de los requisitos cumplidos y fecha de verificación]'
 WHERE id = '[lead_id]';
 ```
 
 ### Consulta de Propiedades Compatibles
 
 ```sql
-SELECT * FROM v_match_beneficio WHERE lead_id = '[lead_id]';
+SELECT * FROM v_match_dss WHERE lead_id = '[lead_id]';
 ```
 
-Esta vista cruza el perfil del lead (zona, tipo, presupuesto) con propiedades que tienen `acepta_beneficio_housing = TRUE`.
+Esta vista cruza el perfil del lead (zona, tipo, presupuesto) con propiedades que tienen `acepta_dss = TRUE`.
 
 ### SCL y Temperatura
 
 - `scl_score` escala 0–10 calculado automáticamente (F1–F5)
 - **HOT = scl_score ≥ 7** → proponer viewing inmediato
-- El `es_beneficio_housing` NO afecta el scl_score — es solo flag de matching
+- El `es_dss` NO afecta el scl_score — es solo flag de matching
 
 ## Flujo: Lead UK en Etapa de Cierre
 

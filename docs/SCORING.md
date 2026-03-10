@@ -12,10 +12,10 @@ la calificación SCL ocurre exclusivamente en ese canal.
 
 **Cumplimiento**: UK Equality Act 2010. Ningún atributo personal influye en el scoring.
 
-**Leads con beneficio de vivienda**: No son penalizados en el SCL.
-Son gestionados con el flag `es_beneficio_housing` que filtra propiedades
+**Leads DSS/UC**: No son penalizados en el SCL.
+Son gestionados con el flag `es_dss` que filtra propiedades
 donde el landlord acepta esta modalidad de pago. Si el lead cumple los
-requisitos del landlord (`beneficio_requisitos_cumplidos = TRUE`),
+requisitos del landlord (`dss_requisitos_cumplidos = TRUE`),
 accede al pool completo de propiedades.
 
 ---
@@ -105,18 +105,18 @@ La calificación SCL ocurre **exclusivamente en WhatsApp Business**.
 
 ---
 
-## Manejo de Leads con Beneficio de Vivienda
+## Manejo de Leads DSS/UC
 
 ### Principio
-Los leads con beneficio de vivienda son una oportunidad de negocio válida
+Los leads DSS/UC son una oportunidad de negocio válida
 cuando se hace el matching correcto con landlords que aceptan esta modalidad.
 **No son leads de menor calidad — tienen un filtro de matching diferente.**
 
-### Campo `es_beneficio_housing`
-- `TRUE` = lead recibe beneficio de vivienda
+### Campo `es_dss`
+- `TRUE` = lead recibe DSS/UC (housing benefit)
 - `FALSE` = lead con ingresos estándar
 - **Impacto en scl_score: NINGUNO**
-- **Impacto en matching: solo propiedades con `acepta_beneficio_housing = TRUE`**
+- **Impacto en matching: solo propiedades con `acepta_dss = TRUE`**
 
 ### Proceso de verificación de requisitos
 Si el lead cumple los requisitos del landlord:
@@ -125,7 +125,7 @@ Si el lead cumple los requisitos del landlord:
 - Carta oficial del organismo de vivienda, O
 - Carta del empleador (si cambió situación laboral)
 
-→ `beneficio_requisitos_cumplidos = TRUE`
+→ `dss_requisitos_cumplidos = TRUE`
 → El lead accede al pool completo de propiedades
 → El scl_score se recalcula con los nuevos datos disponibles
 
@@ -136,7 +136,7 @@ Si el lead cumple los requisitos del landlord:
 
 ## Matriz de Priorización SCL
 
-| scl_score | es_beneficio_housing | beneficio_req_cumplidos | Prioridad | Acción |
+| scl_score | es_dss | dss_req_cumplidos | Prioridad | Acción |
 |-----------|---------------------|------------------------|-----------|--------|
 | 7–10 | FALSE | N/A | 🔴 MÁXIMA | Viewing inmediato — pool completo |
 | 7–10 | TRUE | TRUE | 🔴 MÁXIMA | Viewing inmediato — pool completo |
@@ -152,9 +152,9 @@ Si el lead cumple los requisitos del landlord:
 SELECT
   nombre, zona_preferida, presupuesto_max,
   scl_score, data_completeness, budget_fit,
-  es_beneficio_housing, beneficio_requisitos_cumplidos,
+  es_dss, dss_requisitos_cumplidos,
   CASE
-    WHEN scl_score >= 7 AND (es_beneficio_housing = FALSE OR beneficio_requisitos_cumplidos = TRUE)
+    WHEN scl_score >= 7 AND (es_dss = FALSE OR dss_requisitos_cumplidos = TRUE)
       THEN 'MAXIMA'
     WHEN scl_score >= 7 THEN 'ALTA'
     WHEN scl_score >= 4 THEN 'MEDIA'

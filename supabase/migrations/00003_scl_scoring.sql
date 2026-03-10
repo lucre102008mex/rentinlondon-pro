@@ -19,17 +19,17 @@ ALTER TABLE public.leads ADD CONSTRAINT leads_urgency_score_check CHECK (urgency
 ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS scl_score SMALLINT DEFAULT 0 CHECK (scl_score BETWEEN 0 AND 10);
 COMMENT ON COLUMN public.leads.scl_score IS 'SCL — Sistema de Calificación de Leads. Escala 0-10. Mínimo 7 para cita en oficina.';
 
--- Flag de beneficio de vivienda (housing benefit) — solo para matching de propiedades
-ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS es_beneficio_housing BOOLEAN NOT NULL DEFAULT FALSE;
-COMMENT ON COLUMN public.leads.es_beneficio_housing IS 'TRUE si el lead recibe beneficio de vivienda. Flag de matching únicamente — NO afecta el scl_score.';
+-- Flag DSS/UC — solo para matching de propiedades
+ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS es_dss BOOLEAN NOT NULL DEFAULT FALSE;
+COMMENT ON COLUMN public.leads.es_dss IS 'TRUE si el lead recibe DSS/UC (housing benefit). Flag de matching únicamente — NO afecta el scl_score. Uso interno.';
 
 -- Verificación de requisitos del landlord para leads con beneficio
-ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS beneficio_requisitos_cumplidos BOOLEAN DEFAULT FALSE;
-COMMENT ON COLUMN public.leads.beneficio_requisitos_cumplidos IS 'TRUE cuando el lead ha cumplido los requisitos del landlord (garantor, meses adelantados, carta oficial, etc.). Permite acceso al pool completo de propiedades.';
+ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS dss_requisitos_cumplidos BOOLEAN DEFAULT FALSE;
+COMMENT ON COLUMN public.leads.dss_requisitos_cumplidos IS 'TRUE cuando el lead DSS/UC ha cumplido requisitos del landlord (garantor, meses adelantados, carta oficial). Permite acceso al pool completo de propiedades.';
 
 -- Notas sobre situación de beneficio del lead
-ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS beneficio_notas TEXT;
-COMMENT ON COLUMN public.leads.beneficio_notas IS 'Notas del agente sobre la situación de beneficio de vivienda del lead y requisitos pendientes.';
+ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS dss_notas TEXT;
+COMMENT ON COLUMN public.leads.dss_notas IS 'Notas internas sobre situación DSS/UC del lead y requisitos pendientes con el landlord.';
 
 -- Contador de mensajes respondidos en WhatsApp Business
 ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS wab_engagement_count INTEGER DEFAULT 0 CHECK (wab_engagement_count >= 0);
@@ -39,13 +39,13 @@ COMMENT ON COLUMN public.leads.wab_engagement_count IS 'Número de mensajes resp
 -- 1b. Modificar tabla `properties`
 -- -----------------------------------------------------------------------------
 
--- Indica si el landlord acepta leads con beneficio de vivienda
-ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS acepta_beneficio_housing BOOLEAN NOT NULL DEFAULT FALSE;
-COMMENT ON COLUMN public.properties.acepta_beneficio_housing IS 'TRUE si el landlord acepta leads con beneficio de vivienda. Usado para matching con es_beneficio_housing.';
+-- Indica si el landlord acepta leads DSS/UC
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS acepta_dss BOOLEAN NOT NULL DEFAULT FALSE;
+COMMENT ON COLUMN public.properties.acepta_dss IS 'TRUE si el landlord acepta DSS/UC. Cuando TRUE, el sistema alerta al equipo para contactar al lead compatible.';
 
 -- Requisitos específicos del landlord para leads con beneficio
-ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS beneficio_requisitos TEXT;
-COMMENT ON COLUMN public.properties.beneficio_requisitos IS 'Descripción de los requisitos del landlord para leads con beneficio (ej: garantor requerido, 3 meses adelantados, carta oficial).';
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS dss_requisitos TEXT;
+COMMENT ON COLUMN public.properties.dss_requisitos IS 'Requisitos específicos del landlord para leads DSS/UC (ej: garantor requerido, 6 meses adelantados, Housing Authority letter).';
 
 -- -----------------------------------------------------------------------------
 -- 1c. Función y trigger SCL
@@ -104,7 +104,7 @@ BEGIN
     score := score + 1;
   END IF;
 
-  -- NOTA: es_beneficio_housing NO afecta el score — es solo flag de matching
+  -- NOTA: es_dss NO afecta el score — es solo flag de matching
   NEW.scl_score := LEAST(GREATEST(score, 0), 10);
   RETURN NEW;
 END;
@@ -127,7 +127,7 @@ SELECT
   l.status, l.pipeline_stage, l.asignado_a,
   l.es_internacional, l.requiere_right_to_rent,
   l.urgency_score, l.scl_score, l.data_completeness, l.budget_fit,
-  l.es_beneficio_housing, l.beneficio_requisitos_cumplidos,
+  l.es_dss, l.dss_requisitos_cumplidos,
   l.response_speed_minutes, l.wab_engagement_count,
   l.escalado_jeanette, l.escalado_at, l.motivo_escalado,
   l.ultima_interaccion, l.total_interacciones,
@@ -144,42 +144,49 @@ WHERE l.status NOT IN ('rechazado','perdido','contrato_firmado')
 ORDER BY l.scl_score DESC, l.ultima_interaccion DESC;
 
 -- -----------------------------------------------------------------------------
--- 1e. Vista v_leads_beneficio_pendientes
+-- 1e. Vista v_leads_dss_pendientes
 -- -----------------------------------------------------------------------------
 
 -- Leads con beneficio de vivienda pendientes de verificación de requisitos
-CREATE OR REPLACE VIEW public.v_leads_beneficio_pendientes AS
+CREATE OR REPLACE VIEW public.v_leads_dss_pendientes AS
 SELECT
   l.id, l.nombre, l.telefono,
   l.zona_preferida, l.tipo_propiedad, l.presupuesto_max,
-  l.scl_score, l.beneficio_notas, l.asignado_a,
+  l.scl_score, l.dss_notas, l.dss_requisitos_cumplidos, l.asignado_a,
   l.ultima_interaccion AT TIME ZONE 'Europe/London' AS ultima_interaccion_london
+  , EXISTS (
+    SELECT 1 FROM public.properties p
+    WHERE p.acepta_dss = TRUE
+      AND lower(p.zona) = lower(l.zona_preferida)
+      AND p.tipo = l.tipo_propiedad
+      AND l.presupuesto_max >= (p.precio_mensual * 0.85)::INTEGER
+      AND p.estado = 'available'
+  ) AS tiene_match_inmediato
 FROM public.leads l
-WHERE l.es_beneficio_housing = TRUE
-  AND l.beneficio_requisitos_cumplidos = FALSE
+WHERE l.es_dss = TRUE
   AND l.status NOT IN ('rechazado','perdido','contrato_firmado')
-ORDER BY l.scl_score DESC, l.ultima_interaccion ASC;
+ORDER BY tiene_match_inmediato DESC, l.scl_score DESC, l.ultima_interaccion ASC;
 
 -- -----------------------------------------------------------------------------
--- 1f. Vista v_match_beneficio
+-- 1f. Vista v_match_dss
 -- -----------------------------------------------------------------------------
 
 -- Matching entre leads con beneficio y propiedades que los aceptan
-CREATE OR REPLACE VIEW public.v_match_beneficio AS
+CREATE OR REPLACE VIEW public.v_match_dss AS
 SELECT
-  l.id AS lead_id, l.nombre, l.zona_preferida, l.tipo_propiedad,
-  l.presupuesto_max, l.scl_score, l.beneficio_requisitos_cumplidos, l.beneficio_notas,
+  l.id AS lead_id, l.nombre, l.telefono, l.zona_preferida, l.tipo_propiedad,
+  l.presupuesto_max, l.scl_score, l.dss_requisitos_cumplidos, l.dss_notas,
   p.id AS property_id, p.direccion, p.zona, p.tipo,
-  p.precio_mensual, p.acepta_beneficio_housing, p.beneficio_requisitos
+  p.precio_mensual, p.acepta_dss, p.dss_requisitos, p.disponible_desde
 FROM public.leads l
 JOIN public.properties p ON (
   lower(l.zona_preferida) = lower(p.zona)
   AND l.tipo_propiedad = p.tipo
   AND l.presupuesto_max >= (p.precio_mensual * 0.85)::INTEGER  -- margen del 15%: presupuesto cubre al menos el 85% del precio
-  AND p.acepta_beneficio_housing = TRUE
+  AND p.acepta_dss = TRUE
   AND p.estado = 'available'
 )
-WHERE l.es_beneficio_housing = TRUE
+WHERE l.es_dss = TRUE
   AND l.status NOT IN ('rechazado','perdido','contrato_firmado')
 ORDER BY l.scl_score DESC, p.precio_mensual ASC;
 
@@ -195,7 +202,7 @@ SELECT
   (SELECT COUNT(*) FROM public.leads WHERE scl_score >= 7 AND status NOT IN ('rechazado','perdido','contrato_firmado')) AS leads_hot,
   (SELECT COUNT(*) FROM public.leads WHERE scl_score BETWEEN 4 AND 6 AND status NOT IN ('rechazado','perdido','contrato_firmado')) AS leads_warm,
   (SELECT COUNT(*) FROM public.leads WHERE scl_score <= 3 AND status NOT IN ('rechazado','perdido','contrato_firmado')) AS leads_cold,
-  (SELECT COUNT(*) FROM public.v_leads_beneficio_pendientes) AS leads_beneficio_pendientes,
+  (SELECT COUNT(*) FROM public.v_leads_dss_pendientes) AS leads_dss_pendientes,
   (SELECT COUNT(*) FROM public.leads WHERE es_internacional = TRUE AND status NOT IN ('rechazado','perdido','contrato_firmado')) AS leads_internacionales,
   (SELECT COUNT(*) FROM public.viewings WHERE fecha_hora::DATE = CURRENT_DATE) AS viewings_hoy,
   (SELECT COUNT(*) FROM public.contracts WHERE estado = 'activo') AS contratos_activos,
