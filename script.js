@@ -49,8 +49,8 @@ const properties = [
   },
   {
     id: 'kings-cross',
-    title: 'Estudio moderno en King’s Cross',
-    area: 'King’s Cross',
+    title: 'Estudio moderno en King's Cross',
+    area: 'King's Cross',
     price: 1900,
     beds: 0,
     baths: 1,
