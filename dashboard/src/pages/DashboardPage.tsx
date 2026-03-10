@@ -3,6 +3,20 @@ import StatusDot from "@/components/StatusDot";
 import { useState } from "react";
 import { useDashboardData } from "@/hooks/useDashboardData";
 
+interface Lead {
+  id: string;
+  nombre: string;
+  urgency_score?: number;
+  presupuesto_max?: number;
+  asignado_a: string;
+}
+
+interface ActivityItem {
+  status: "active" | "idle" | "pending" | "error";
+  action: string;
+  time: string;
+}
+
 const DashboardPage = () => {
   const { leadsStats, activityFeed, agentActivity, isLoading } = useDashboardData();
   const [pipelineFilter, setPipelineFilter] = useState("all");
@@ -57,7 +71,7 @@ const DashboardPage = () => {
     { time: "15:38:22", level: "INFO", message: "[Cron] Property price update job completed in 4.2s" },
   ];
 
-  const leads = leadsStats?.leadsList.map(l => ({
+  const leads = (leadsStats?.leadsList as Lead[] || []).map(l => ({
     id: l.id.substring(0, 8),
     name: l.nombre,
     score: l.urgency_score ? l.urgency_score * 10 : 0,
@@ -149,7 +163,7 @@ const DashboardPage = () => {
           <div className="divide-y divide-border max-h-[400px] overflow-auto">
             {activityToShow.map((item, i) => (
               <div key={i} className="px-4 py-3 flex items-start gap-3 hover:bg-accent/50 transition-colors">
-                <StatusDot status={item.status} className="mt-1.5 shrink-0" />
+                <StatusDot status={item.status as any} className="mt-1.5 shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-foreground">{item.action}</p>
                 </div>
@@ -234,8 +248,8 @@ const DashboardPage = () => {
                   key={lead.id}
                   onClick={() => setSelectedLeadId(lead.id)}
                   className={`transition-colors h-[52px] cursor-pointer ${selectedLeadId === lead.id
-                      ? 'bg-primary/20 hover:bg-primary/25'
-                      : 'hover:bg-accent/50'
+                    ? 'bg-primary/20 hover:bg-primary/25'
+                    : 'hover:bg-accent/50'
                     }`}
                 >
                   <td className="px-4 py-3 font-mono text-primary text-xs whitespace-nowrap">{lead.id}</td>
