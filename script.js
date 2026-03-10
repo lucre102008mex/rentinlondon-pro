@@ -115,7 +115,7 @@ function renderProperties(items) {
         </div>
         <div class="price">${formatPrice(property.price)} / mes</div>
         <div class="stats">
-          <span>${property.beds || 'Estudio'} hab.</span>
+          <span>${property.beds === 0 || property.beds == null ? 'Estudio' : `${property.beds} hab.`}</span>
           <span>${property.baths} baños</span>
           <span>${property.size} m²</span>
         </div>
