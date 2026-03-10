@@ -49,8 +49,8 @@ const properties = [
   },
   {
     id: 'kings-cross',
-    title: 'Estudio moderno en King's Cross',
-    area: 'King's Cross',
+    title: "Estudio moderno en King's Cross",
+    area: "King's Cross",
     price: 1900,
     beds: 0,
     baths: 1,
@@ -116,7 +116,7 @@ function renderProperties(items) {
         <div class="price">${formatPrice(property.price)} / mes</div>
         <div class="stats">
           <span>${property.beds === 0 || property.beds == null ? 'Estudio' : `${property.beds} hab.`}</span>
-          <span>${property.baths} baños</span>
+          <span>${property.baths} baño${property.baths === 1 ? '' : 's'}</span>
           <span>${property.size} m²</span>
         </div>
         <div class="tags">
