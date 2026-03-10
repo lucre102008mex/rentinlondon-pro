@@ -205,7 +205,7 @@ agents:
     soul: agents/jeanette/soul.md
     identity: agents/jeanette/identity.md
     channel: whatsapp
-    active: false
+    active: true
     llm:
       model: ${LLM_MODEL_JEANETTE:-google/gemini-2.5-flash-lite}
       api_key: ${GEMINI_API_KEY_JEANETTE}
@@ -340,7 +340,7 @@ agents:
       - validate_data_completeness
       - refresh_scoring
     schedule:
-      dormant_reactivation: "0 10 * * 3 Europe/London"
+      reactivator: "0 7 * * * Europe/London"
       data_normalization: "0 3 * * * Europe/London"
       score_refresh: "0 6 * * * Europe/London"
     rate_limits:
