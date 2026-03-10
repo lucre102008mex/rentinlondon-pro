@@ -152,7 +152,7 @@ function applyFilters(event) {
     return matchesTerm && matchesPrice && matchesBeds;
   });
 
-  summaryEl.textContent = `${filtered.length} resultado${filtered.length === 1 ? '' : 's'} disponibles`;
+  summaryEl.textContent = `${filtered.length} resultado${filtered.length === 1 ? '' : 's'} disponible${filtered.length === 1 ? '' : 's'}`;
   renderProperties(filtered);
 }
 
