@@ -12,29 +12,29 @@ Al recibir un mensaje de WhatsApp de un prospecto que viene de un anuncio de Fac
 
 ```
 [Lead hace clic en CTWA del anuncio FB/IG]
- ↓
+       ↓
 Llega mensaje directo por WhatsApp (wacli)
- ↓
+       ↓
 Rose recibe y registra lead en Supabase
- ↓
+       ↓
 Inicio de calificación SCL
- ↓
+       ↓
 ¿Responde a preguntas de calificación?
- ↓ SÍ ↓ NO (24h)
- Intake completo Follow-up 1
- ↓ ↓
- Scoring auto ¿Responde en 72h?
- ↓ ↓ SÍ ↓ NO
- Ver propiedades Intake Follow-up 2
- ↓ ↓
- Proponer viewing 7 días → script-runner
+    ↓ SÍ              ↓ NO (24h)
+  Intake completo    Follow-up 1
+       ↓                  ↓
+  Scoring auto       ¿Responde en 72h?
+       ↓              ↓ SÍ    ↓ NO
+  Ver propiedades  Intake   Follow-up 2
+       ↓                        ↓
+  Proponer viewing         7 días → script-runner
 ```
 
 ## Mensajes Plantilla
 
 ### Contacto inicial — anuncio de propiedad específica (EN)
 ```
-Hi [NOMBRE]! I'm Rose from RentInLondon.
+Hi [NOMBRE]!  I'm Rose from RentInLondon.
 
 You showed interest in our [TIPO] in [ZONA] — it's still available and I'd love to tell you more about it!
 
@@ -43,11 +43,11 @@ Quick question: when are you looking to move? That'll help me find the best opti
 
 ### Contacto inicial — anuncio genérico (EN)
 ```
-Hi [NOMBRE]! Rose here from RentInLondon.
+Hi [NOMBRE]!  Rose here from RentInLondon.
 
 I saw you were exploring our London rentals — great timing! We have some fantastic properties available right now.
 
-Are you still looking? If so, which area of London interests you most? 
+Are you still looking? If so, which area of London interests you most? 📍
 ```
 
 ### Follow-up 1 (24h sin respuesta)
@@ -61,7 +61,7 @@ No worries if plans have changed, just want to make sure I'm here when you need 
 ```
 Hey [NOMBRE]! One last message from me — we just had a new [TIPO] available in [ZONA] at £[PRECIO]/month.
 
-Might be perfect for you! Would love to share details if you're still searching. 
+Might be perfect for you! Would love to share details if you're still searching. 🏠
 ```
 
 ### Propiedad disponible match (EN)
@@ -69,24 +69,24 @@ Might be perfect for you! Would love to share details if you're still searching.
 Great news [NOMBRE]! 
 
 I found a perfect match for you:
- [TIPO] in [ZONA]
- £[PRECIO]/month (bills [included/excluded])
- Available from [FECHA]
- [1-2 highlights de la propiedad]
+🏠 [TIPO] in [ZONA]
+💷 £[PRECIO]/month (bills [included/excluded])
+📅 Available from [FECHA]
+✅ [1-2 highlights de la propiedad]
 
-Would you like to schedule a viewing? I can book one for [DÍA 1] or [DÍA 2]. Which works? 
+Would you like to schedule a viewing? I can book one for [DÍA 1] or [DÍA 2]. Which works? 📅
 ```
 
 ## Datos de Ads que Cargo Siempre
 
 ```json
 {
- "campaign_name": "nombre de la campaña FB/IG",
- "ad_name": "nombre del anuncio específico",
- "property_featured": "propiedad destacada en el anuncio (si aplica)",
- "lead_form_answers": {},
- "fb_lead_id": "ID del lead en Facebook Lead Center",
- "ad_placement": "Facebook|Instagram|Messenger"
+  "campaign_name": "nombre de la campaña FB/IG",
+  "ad_name": "nombre del anuncio específico",
+  "property_featured": "propiedad destacada en el anuncio (si aplica)",
+  "lead_form_answers": {},
+  "fb_lead_id": "ID del lead en Facebook Lead Center",
+  "ad_placement": "Facebook|Instagram|Messenger"
 }
 ```
 
@@ -154,19 +154,19 @@ read_whatsapp_history("agents/rose/memory/whatsapp_history.json")
 Por cada conversación, identificar:
 ```json
 {
- "nombre": "string o null",
- "telefono": "string (normalizado E.164)",
- "move_in_date": "YYYY-MM-DD o null",
- "edad": "número o null",
- "ocupacion": "string o null",
- "benefits": true|false|null,
- "zona_preferida": "string o null",
- "presupuesto": "número o null",
- "tipo_propiedad": "room|studio|flat|null",
- "canal_origen": "facebook|instagram",
- "estado_calificacion": "nuevo|intake_parcial|calificado|dormido|descartado",
- "scl_score": "número 0-10 o null",
- "notas": "observaciones relevantes"
+  "nombre": "string o null",
+  "telefono": "string (normalizado E.164)",
+  "move_in_date": "YYYY-MM-DD o null",
+  "edad": "número o null",
+  "ocupacion": "string o null",
+  "benefits": true|false|null,
+  "zona_preferida": "string o null",
+  "presupuesto": "número o null",
+  "tipo_propiedad": "room|studio|flat|null",
+  "canal_origen": "facebook|instagram",
+  "estado_calificacion": "nuevo|intake_parcial|calificado|dormido|descartado",
+  "scl_score": "número 0-10 o null",
+  "notas": "observaciones relevantes"
 }
 ```
 
@@ -178,32 +178,32 @@ write_memory_file("agents/rose/memory/appointments.json", appointments_array)
 Formato de cada cita:
 ```json
 {
- "lead_nombre": "string",
- "lead_telefono": "string",
- "fecha": "YYYY-MM-DD",
- "hora": "HH:MM (Europe/London)",
- "propiedad": "string o null",
- "tipo": "viewing|video_tour|llamada",
- "confirmada": true|false
+  "lead_nombre": "string",
+  "lead_telefono": "string",
+  "fecha": "YYYY-MM-DD",
+  "hora": "HH:MM (Europe/London)",
+  "propiedad": "string o null",
+  "tipo": "viewing|video_tour|llamada",
+  "confirmada": true|false
 }
 ```
 
 **4. Enviar resumen a Alex**
 ```
 report_to_alex({
- "agente": "rose",
- "timestamp_london": "ISO8601",
- "total_leads_encontrados": número,
- "leads_por_estado": {
- "nuevos": n,
- "intake_parcial": n,
- "calificados": n,
- "dormidos": n,
- "descartados": n
- },
- "citas_esta_semana": número,
- "citas_proxima_semana": número,
- "leads_extraidos": [...array completo...]
+  "agente": "rose",
+  "timestamp_london": "ISO8601",
+  "total_leads_encontrados": número,
+  "leads_por_estado": {
+    "nuevos": n,
+    "intake_parcial": n,
+    "calificados": n,
+    "dormidos": n,
+    "descartados": n
+  },
+  "citas_esta_semana": número,
+  "citas_proxima_semana": número,
+  "leads_extraidos": [...array completo...]
 })
 ```
 

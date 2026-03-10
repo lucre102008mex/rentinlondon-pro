@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 7%;
+    --foreground: 210 20% 92%;
+
+    --card: 220 18% 10%;
+    --card-foreground: 210 20% 92%;
+
+    --popover: 220 18% 10%;
+    --popover-foreground: 210 20% 92%;
+
+    --primary: 199 89% 48%;
+    --primary-foreground: 220 20% 7%;
+
+    --secondary: 220 16% 16%;
+    --secondary-foreground: 210 20% 80%;
+
+    --muted: 220 14% 14%;
+    --muted-foreground: 215 15% 55%;
+
+    --accent: 220 16% 18%;
+    --accent-foreground: 210 20% 92%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 14% 16%;
+    --input: 220 14% 18%;
+    --ring: 199 89% 48%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 220 20% 5%;
+    --sidebar-foreground: 215 15% 55%;
+    --sidebar-primary: 199 89% 48%;
+    --sidebar-primary-foreground: 220 20% 7%;
+    --sidebar-accent: 220 16% 12%;
+    --sidebar-accent-foreground: 210 20% 92%;
+    --sidebar-border: 220 14% 12%;
+    --sidebar-ring: 199 89% 48%;
+
+    /* Status colors */
+    --status-active: 142 71% 45%;
+    --status-pending: 43 96% 56%;
+    --status-error: 0 84% 60%;
+    --status-idle: 220 10% 40%;
+
+    /* Category colors */
+    --cat-leads: 217 91% 60%;
+    --cat-content: 142 71% 45%;
+    --cat-viewings: 270 60% 60%;
+    --cat-automation: 220 10% 50%;
+
+    /* Priority */
+    --priority-urgent: 0 84% 60%;
+    --priority-high: 25 95% 53%;
+    --priority-medium: 43 96% 56%;
+    --priority-low: 217 91% 60%;
+
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .dark {
+    /* Same as root - dark only app */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+}
+
+@layer utilities {
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .status-dot {
+    @apply w-2 h-2 rounded-full inline-block;
+  }
+
+  .status-active {
+    background-color: hsl(var(--status-active));
+    box-shadow: 0 0 6px hsl(var(--status-active) / 0.5);
+  }
+
+  .status-pending {
+    background-color: hsl(var(--status-pending));
+    box-shadow: 0 0 6px hsl(var(--status-pending) / 0.5);
+  }
+
+  .status-error {
+    background-color: hsl(var(--status-error));
+    box-shadow: 0 0 6px hsl(var(--status-error) / 0.5);
+  }
+
+  .status-idle {
+    background-color: hsl(var(--status-idle));
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.15);
+  }
+}

@@ -9,7 +9,7 @@
       "agent": "alex",
       "channel": "telegram",
       "hooks": {
-        "on_message": "agents/alex/alex-identity.md",
+        "on_message": "agents/alex/identity.md",
         "on_schedule": "pipelines/daily-report.lobster",
         "on_error": "alert_owner"
       },
@@ -22,7 +22,7 @@
       "agent": "ivy",
       "channel": "whatsapp",
       "hooks": {
-        "on_message": "agents/ivy/ivy-identity.md",
+        "on_message": "agents/ivy/identity.md",
         "on_lead_created": "log_interaction",
         "on_escalate": "forward_to_jeanette"
       },
@@ -34,14 +34,16 @@
       },
       "filters": {
         "es_internacional": false,
-        "canal_origen": ["whatsapp"]
+        "canal_origen": [
+          "whatsapp"
+        ]
       }
     },
     {
       "agent": "rose",
       "channel": "whatsapp",
       "hooks": {
-        "on_message": "agents/rose/rose-identity.md",
+        "on_message": "agents/rose/identity.md",
         "on_lead_created": "log_interaction",
         "on_escalate": "forward_to_jeanette"
       },
@@ -53,14 +55,17 @@
       },
       "filters": {
         "es_internacional": false,
-        "canal_origen": ["facebook", "instagram"]
+        "canal_origen": [
+          "facebook",
+          "instagram"
+        ]
       }
     },
     {
       "agent": "salo",
       "channel": "whatsapp",
       "hooks": {
-        "on_message": "agents/salo/salo-identity.md",
+        "on_message": "agents/salo/identity.md",
         "on_lead_created": "log_interaction",
         "on_escalate": "forward_to_jeanette"
       },
@@ -72,14 +77,20 @@
       },
       "filters": {
         "es_internacional": false,
-        "canal_origen": ["gumtree", "rightmove", "zoopla", "spareroom", "openrent"]
+        "canal_origen": [
+          "gumtree",
+          "rightmove",
+          "zoopla",
+          "spareroom",
+          "openrent"
+        ]
       }
     },
     {
       "agent": "jeanette",
       "channel": "whatsapp",
       "hooks": {
-        "on_message": "agents/jeanette/jeanette-identity.md",
+        "on_message": "agents/jeanette/identity.md",
         "on_lead_escalated": "accept_escalation",
         "on_contract_signed": "notify_alex",
         "on_r2r_completed": "update_contract"
@@ -95,7 +106,7 @@
       }
     },
     {
-      "agent": "ads-fb",
+      "agent": "facebook",
       "channel": "internal",
       "hooks": {
         "on_schedule": "generate_ads_report"
@@ -103,7 +114,7 @@
       "comment": "ads-fb NO captura leads. Gestiona campañas FB/IG y reporta métricas. Los leads llegan directo a Rose/Ivy vía CTWA."
     },
     {
-      "agent": "ads-gumtree",
+      "agent": "gumtree",
       "channel": "internal",
       "hooks": {
         "on_schedule_refresh": "refresh_all_listings",
@@ -112,7 +123,7 @@
       "comment": "ads-gumtree NO captura leads. Gestiona listings en marketplaces. Los leads llegan directo a Salo vía WhatsApp desde el anuncio."
     },
     {
-      "agent": "script-runner",
+      "agent": "script",
       "channel": "internal",
       "hooks": {
         "on_schedule": "run_scheduled_task",
@@ -143,6 +154,14 @@
     "edge_function_url": "${SUPABASE_URL}/functions/v1/sync-to-sheets",
     "hmac_secret_env": "HMAC_SECRET",
     "schedule": "0 */6 * * * Europe/London",
-    "tables": ["leads", "interactions", "properties", "viewings", "contracts", "listings_history", "weekly_summaries"]
+    "tables": [
+      "leads",
+      "interactions",
+      "properties",
+      "viewings",
+      "contracts",
+      "listings_history",
+      "weekly_summaries"
+    ]
   }
 }
