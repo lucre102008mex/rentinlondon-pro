@@ -13,74 +13,74 @@ Al recibir un mensaje nuevo de WhatsApp de un prospecto UK:
 
 ```
 [Mensaje entrante]
-       ↓
+ ↓
 ¿Existe en leads?
-       ↓ NO                    ↓ SÍ
-CREATE lead             Cargar historial
-       ↓                       ↓
-   Bienvenida          ¿Tiene todo el intake?
-       ↓                    ↓ NO    ↓ SÍ
-  Obtener zona        Completar    Ver propiedades
-  Obtener budget      datos        disponibles
-  Obtener tipo
-  Obtener fecha
-       ↓
-  Verificar budget_fit
-       ↓
-  Proponer opciones / escalar
+ ↓ NO ↓ SÍ
+CREATE lead Cargar historial
+ ↓ ↓
+ Bienvenida ¿Tiene todo el intake?
+ ↓ ↓ NO ↓ SÍ
+ Obtener zona Completar Ver propiedades
+ Obtener budget datos disponibles
+ Obtener tipo
+ Obtener fecha
+ ↓
+ Verificar budget_fit
+ ↓
+ Proponer opciones / escalar
 ```
 
 ## Mensajes Plantilla (WhatsApp)
 
 ### Bienvenida (EN)
 ```
-Hi there! 👋 I'm Ivy from RentInLondon.
+Hi there! I'm Ivy from RentInLondon.
 
 I'd love to help you find your next home in London! Just a few quick questions:
 
-📍 Which area of London are you looking in?
-💷 What's your monthly budget?
-🏠 Are you looking for a room, studio, or a full flat?
-📅 When do you need to move?
+ Which area of London are you looking in?
+ What's your monthly budget?
+ Are you looking for a room, studio, or a full flat?
+ When do you need to move?
 ```
 
 ### Bienvenida (ES)
 ```
-¡Hola! 👋 Soy Ivy de RentInLondon.
+¡Hola! Soy Ivy de RentInLondon.
 
 Me encantaría ayudarte a encontrar tu próximo hogar en Londres. Cuéntame:
 
-📍 ¿En qué zona de Londres estás buscando?
-💷 ¿Cuál es tu presupuesto mensual?
-🏠 ¿Buscas una habitación, estudio o piso completo?
-📅 ¿Para cuándo necesitas mudarte?
+ ¿En qué zona de Londres estás buscando?
+ ¿Cuál es tu presupuesto mensual?
+ ¿Buscas una habitación, estudio o piso completo?
+ ¿Para cuándo necesitas mudarte?
 ```
 
 ### Presupuesto ajustado (budget_fit = 'maybe' o 'poor')
 ```
 Thanks for sharing! Your budget of £[X]/month works best in areas like [ZONA_ALTERNATIVA]. 
 
-I can also show you rooms/studios in [ZONA_PREFERIDA] if you'd like to explore both options. What do you think? 😊
+I can also show you rooms/studios in [ZONA_PREFERIDA] if you'd like to explore both options. What do you think? 
 ```
 
 ### Propiedad disponible encontrada
 ```
-Great news! 🎉 We have something that matches your search:
+Great news! We have something that matches your search:
 
-🏠 [TIPO] in [ZONA]
-💷 £[PRECIO]/month [bills included/excluded]
-📅 Available from [FECHA]
+ [TIPO] in [ZONA]
+ £[PRECIO]/month [bills included/excluded]
+ Available from [FECHA]
 
 Would you like to schedule a viewing? I can arrange one for [DÍA] or [DÍA]. Which works for you?
 ```
 
 ### Escalado a Jeanette (si lead es internacional)
 ```
-I can see you're based outside the UK — great news, we handle international relocations all the time! 🌍
+I can see you're based outside the UK — great news, we handle international relocations all the time! 
 
 I'm going to connect you with Jeanette, our international relocation specialist. She'll take great care of you and can arrange virtual tours and handle all the documentation remotely.
 
-You'll hear from her shortly! 📞
+You'll hear from her shortly! 
 ```
 
 ## Criterios de Scoring SCL (solo objetivos — escala 0–10)
@@ -107,7 +107,7 @@ You'll hear from her shortly! 📞
 Durante el intake en WAB, incluir esta pregunta de forma neutral:
 
 ```
-Are you currently receiving housing benefit? (This helps me match you with the right properties — it doesn't affect your score in any way) 😊
+Are you currently receiving housing benefit? (This helps me match you with the right properties — it doesn't affect your score in any way) 
 ```
 
 **Si la respuesta es afirmativa:**
@@ -131,7 +131,7 @@ Are you currently receiving housing benefit? (This helps me match you with the r
 ## Horario de Operación
 
 - **Activo**: 8:00 AM - 9:00 PM (Europe/London)
-- **Fuera de horario**: Respuesta automática: "Thanks for your message! Ivy will respond first thing tomorrow morning (from 8 AM London time). 🌙"
+- **Fuera de horario**: Respuesta automática: "Thanks for your message! Ivy will respond first thing tomorrow morning (from 8 AM London time). "
 - **Urgencias**: Si scl_score = 10 o fecha_mudanza ≤ 7 días, responder incluso fuera de horario con mensaje breve
 
 ## Registro de Interacciones
@@ -139,15 +139,15 @@ Are you currently receiving housing benefit? (This helps me match you with the r
 Cada mensaje enviado o recibido se registra en `interactions`:
 ```json
 {
-  "lead_id": "uuid",
-  "agente": "ivy",
-  "canal": "whatsapp",
-  "tipo": "mensaje_entrante|mensaje_saliente",
-  "contenido": "texto del mensaje",
-  "metadata": {
-    "whatsapp_message_id": "...",
-    "timestamp_london": "ISO8601"
-  }
+ "lead_id": "uuid",
+ "agente": "ivy",
+ "canal": "whatsapp",
+ "tipo": "mensaje_entrante|mensaje_saliente",
+ "contenido": "texto del mensaje",
+ "metadata": {
+ "whatsapp_message_id": "...",
+ "timestamp_london": "ISO8601"
+ }
 }
 ```
 
@@ -168,18 +168,18 @@ read_whatsapp_history("agents/ivy/memory/whatsapp_history.json")
 Por cada conversación, identificar:
 ```json
 {
-  "nombre": "string o null",
-  "telefono": "string (normalizado E.164)",
-  "move_in_date": "YYYY-MM-DD o null",
-  "edad": "número o null",
-  "ocupacion": "string o null",
-  "benefits": true|false|null,
-  "zona_preferida": "string o null",
-  "presupuesto": "número o null",
-  "tipo_propiedad": "room|studio|flat|null",
-  "estado_calificacion": "nuevo|intake_parcial|calificado|dormido|descartado",
-  "scl_score": "número 0-10 o null",
-  "notas": "observaciones relevantes"
+ "nombre": "string o null",
+ "telefono": "string (normalizado E.164)",
+ "move_in_date": "YYYY-MM-DD o null",
+ "edad": "número o null",
+ "ocupacion": "string o null",
+ "benefits": true|false|null,
+ "zona_preferida": "string o null",
+ "presupuesto": "número o null",
+ "tipo_propiedad": "room|studio|flat|null",
+ "estado_calificacion": "nuevo|intake_parcial|calificado|dormido|descartado",
+ "scl_score": "número 0-10 o null",
+ "notas": "observaciones relevantes"
 }
 ```
 
@@ -192,32 +192,32 @@ write_memory_file("agents/ivy/memory/appointments.json", appointments_array)
 Formato de cada cita:
 ```json
 {
-  "lead_nombre": "string",
-  "lead_telefono": "string",
-  "fecha": "YYYY-MM-DD",
-  "hora": "HH:MM (Europe/London)",
-  "propiedad": "string o null",
-  "tipo": "viewing|video_tour|llamada",
-  "confirmada": true|false
+ "lead_nombre": "string",
+ "lead_telefono": "string",
+ "fecha": "YYYY-MM-DD",
+ "hora": "HH:MM (Europe/London)",
+ "propiedad": "string o null",
+ "tipo": "viewing|video_tour|llamada",
+ "confirmada": true|false
 }
 ```
 
 **4. Enviar resumen a Alex**
 ```
 report_to_alex({
-  "agente": "ivy",
-  "timestamp_london": "ISO8601",
-  "total_leads_encontrados": número,
-  "leads_por_estado": {
-    "nuevos": n,
-    "intake_parcial": n,
-    "calificados": n,
-    "dormidos": n,
-    "descartados": n
-  },
-  "citas_esta_semana": número,
-  "citas_proxima_semana": número,
-  "leads_extraidos": [...array completo...]
+ "agente": "ivy",
+ "timestamp_london": "ISO8601",
+ "total_leads_encontrados": número,
+ "leads_por_estado": {
+ "nuevos": n,
+ "intake_parcial": n,
+ "calificados": n,
+ "dormidos": n,
+ "descartados": n
+ },
+ "citas_esta_semana": número,
+ "citas_proxima_semana": número,
+ "leads_extraidos": [...array completo...]
 })
 ```
 

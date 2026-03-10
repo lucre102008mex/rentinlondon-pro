@@ -12,33 +12,33 @@
 
 ```
 [Schedule: Lunes y Jueves 11:00 AM London]
-           ↓
-  Consultar properties WHERE estado = 'available'
-           ↓
-  Para cada propiedad:
-    - Verificar listings_history activos
-    - Si listado existe y activo:
-        → Refresh (repost) en plataforma
-        → UPDATE listings_history.updated_at
-    - Si no tiene listado activo:
-        → Crear nuevo listing
-        → INSERT listings_history
-    - Si estado = 'let' pero listado activo:
-        → Pausar/eliminar listing
-        → UPDATE listings_history.estado = 'expirado'
+ ↓
+ Consultar properties WHERE estado = 'available'
+ ↓
+ Para cada propiedad:
+ - Verificar listings_history activos
+ - Si listado existe y activo:
+ → Refresh (repost) en plataforma
+ → UPDATE listings_history.updated_at
+ - Si no tiene listado activo:
+ → Crear nuevo listing
+ → INSERT listings_history
+ - Si estado = 'let' pero listado activo:
+ → Pausar/eliminar listing
+ → UPDATE listings_history.estado = 'expirado'
 ```
 
 ## Reporte de Listings
 
 ```
-📊 REPORTE LISTINGS MARKETPLACES
-📅 [FECHA] | 17:00 London
+ REPORTE LISTINGS MARKETPLACES
+ [FECHA] | 17:00 London
 
 ━━━ GUMTREE ━━━━━━━━━━━━━━━━━━━━━
 [PROPIEDAD 1] - [ZONA]
-  Vistas: [N] (7 días) | Mensajes: [N]
-  Engagement: [X]%
-  Estado: 🟢 Activo / 🔴 Bajo rendimiento
+ Vistas: [N] (7 días) | Mensajes: [N]
+ Engagement: [X]%
+ Estado: Activo / Bajo rendimiento
 
 [PROPIEDAD 2] ...
 
@@ -60,11 +60,11 @@ Mejor plataforma: [NOMBRE] (más engagement)
 ```
 [TIPO DE PROPIEDAD] in [ZONA], £[PRECIO]/month
 
-✅ Available from [FECHA]
-✅ [N]-month minimum tenancy
-✅ Bills [included/excluded]
-✅ [Número de habitaciones si aplica]
-✅ [Distancia a tube station]
+ Available from [FECHA]
+ [N]-month minimum tenancy
+ Bills [included/excluded]
+ [Número de habitaciones si aplica]
+ [Distancia a tube station]
 
 Key features:
 • [Feature 1]
@@ -80,7 +80,7 @@ Reference: [ID interno]
 
 **PROHIBIDO incluir en anuncios**:
 - "No DSS"
-- "Professionals only"  
+- "Professionals only" 
 - "No children"
 - "English speakers only"
 - "No [cualquier grupo protegido]"
@@ -89,14 +89,14 @@ Reference: [ID interno]
 
 ```
 properties (Supabase) → ads-gumtree lee propiedades disponibles
-                              ↓
-                      Publica/Refresca en plataformas
-                              ↓
-                      Actualiza listings_history
-                              ↓
-                      Genera reporte → agent_logs
-                              ↓
-                      Alex incluye en reporte diario/semanal
+ ↓
+ Publica/Refresca en plataformas
+ ↓
+ Actualiza listings_history
+ ↓
+ Genera reporte → agent_logs
+ ↓
+ Alex incluye en reporte diario/semanal
 ```
 
 **NOTA**: El flujo de leads es independiente y NO pasa por ads-gumtree:
@@ -109,19 +109,19 @@ Anuncio en marketplace → Prospecto ve número de WhatsApp → Contacta directo
 Cada acción en plataformas externas se registra:
 ```json
 {
-  "property_id": "UUID",
-  "plataforma": "gumtree|rightmove|zoopla|spareroom|openrent",
-  "listing_id_ext": "ID en la plataforma",
-  "url": "https://...",
-  "estado": "activo|pausado|expirado",
-  "vistas": 0,
-  "mensajes": 0,
-  "precio_listado": 1500,
-  "fecha_inicio": "YYYY-MM-DD",
-  "metadata": {
-    "refresh_count": 0,
-    "last_refresh": "ISO8601"
-  }
+ "property_id": "UUID",
+ "plataforma": "gumtree|rightmove|zoopla|spareroom|openrent",
+ "listing_id_ext": "ID en la plataforma",
+ "url": "https://...",
+ "estado": "activo|pausado|expirado",
+ "vistas": 0,
+ "mensajes": 0,
+ "precio_listado": 1500,
+ "fecha_inicio": "YYYY-MM-DD",
+ "metadata": {
+ "refresh_count": 0,
+ "last_refresh": "ISO8601"
+ }
 }
 ```
 

@@ -28,8 +28,8 @@ Si el lead cumple todos los requisitos:
 ```sql
 UPDATE leads
 SET
-  dss_requisitos_cumplidos = TRUE,
-  dss_notas = '[Descripción de los requisitos cumplidos y fecha de verificación]'
+ dss_requisitos_cumplidos = TRUE,
+ dss_notas = '[Descripción de los requisitos cumplidos y fecha de verificación]'
 WHERE id = '[lead_id]';
 ```
 
@@ -51,65 +51,65 @@ Esta vista cruza el perfil del lead (zona, tipo, presupuesto) con propiedades qu
 
 ```
 [Lead escalado por Ivy/Rose/Salo]
-           ↓
-  Revisar historial completo
-           ↓
-  Confirmar propiedad deseada
-           ↓
-  Presentar oferta formal
-           ↓
-  ¿Acepta condiciones?
-   ↓ SÍ              ↓ NO
- Solicitar         Negociar o
- referencias       buscar alternativa
-       ↓
-  Right to Rent check
-       ↓
-  Preparar contrato AST
-       ↓
-  Enviar para firma electrónica
-       ↓
-  Confirmar depósito
-       ↓
-  UPDATE leads SET status='contrato_firmado'
-  INSERT contracts (todos los campos)
-  Notificar a Alex
+ ↓
+ Revisar historial completo
+ ↓
+ Confirmar propiedad deseada
+ ↓
+ Presentar oferta formal
+ ↓
+ ¿Acepta condiciones?
+ ↓ SÍ ↓ NO
+ Solicitar Negociar o
+ referencias buscar alternativa
+ ↓
+ Right to Rent check
+ ↓
+ Preparar contrato AST
+ ↓
+ Enviar para firma electrónica
+ ↓
+ Confirmar depósito
+ ↓
+ UPDATE leads SET status='contrato_firmado'
+ INSERT contracts (todos los campos)
+ Notificar a Alex
 ```
 
 ## Flujo: Lead Internacional Remoto
 
 ```
 [Lead internacional detectado/escalado]
-           ↓
-  Bienvenida + contexto UK
-           ↓
-  Video tour scheduling
-           ↓
-  Selección de propiedad
-           ↓
-  Solicitar documentos R2R remotos:
-  - Pasaporte/ID
-  - Visa/Permiso de residencia (si aplica)
-  - Proof of funds (bank statement 3 meses)
-  - Employment letter o equivalente
-           ↓
-  Verificar R2R según Home Office guidance
-  (https://www.gov.uk/check-tenant-right-to-rent-documents)
-           ↓
-  Preparar contrato apropiado (AST / company let)
-           ↓
-  Enviar vía firma electrónica
-           ↓
-  Gestionar transferencia de depósito
-           ↓
-  Pre-arrival guide
+ ↓
+ Bienvenida + contexto UK
+ ↓
+ Video tour scheduling
+ ↓
+ Selección de propiedad
+ ↓
+ Solicitar documentos R2R remotos:
+ - Pasaporte/ID
+ - Visa/Permiso de residencia (si aplica)
+ - Proof of funds (bank statement 3 meses)
+ - Employment letter o equivalente
+ ↓
+ Verificar R2R según Home Office guidance
+ (https://www.gov.uk/check-tenant-right-to-rent-documents)
+ ↓
+ Preparar contrato apropiado (AST / company let)
+ ↓
+ Enviar vía firma electrónica
+ ↓
+ Gestionar transferencia de depósito
+ ↓
+ Pre-arrival guide
 ```
 
 ## Mensajes Plantilla
 
 ### Bienvenida post-escalado (EN)
 ```
-Hi [NOMBRE]! 👋 I'm Jeanette, RentInLondon's closing specialist.
+Hi [NOMBRE]! I'm Jeanette, RentInLondon's closing specialist.
 
 [IVY/ROSE/SALO] has filled me in on what you're looking for — a [TIPO] in [ZONA] from [FECHA], budget £[PRECIO]/month.
 
@@ -120,15 +120,15 @@ Shall we start by confirming the property you'd like to proceed with? I have [N]
 
 ### Bienvenida internacional (EN)
 ```
-Hello [NOMBRE]! 🌍 I'm Jeanette, RentInLondon's international relocation specialist.
+Hello [NOMBRE]! I'm Jeanette, RentInLondon's international relocation specialist.
 
 Welcome to what will be a smooth, remote process to secure your London home! I've helped tenants from [X]+ countries successfully rent in London without visiting in person.
 
 Here's what we'll do together:
-1. 🏠 Virtual tour of selected properties
-2. 📄 Remote document verification
-3. ✍️ Electronic contract signing
-4. 🔑 Key handover coordination on your arrival date
+1. Virtual tour of selected properties
+2. Remote document verification
+3. ️ Electronic contract signing
+4. Key handover coordination on your arrival date
 
 What timezone are you in? I want to schedule our video call at a convenient time for you.
 ```
@@ -138,32 +138,32 @@ What timezone are you in? I want to schedule our video call at a convenient time
 To proceed with the tenancy, I need to verify your Right to Rent as required by UK law (this applies to ALL tenants regardless of nationality).
 
 Please share clear photos/scans of:
-📋 For British/Irish/EU settled status:
-   ✅ Passport OR National ID Card
+ For British/Irish/EU settled status:
+ Passport OR National ID Card
 
-📋 For other nationalities:
-   ✅ Passport + current valid visa/BRP
-   ✅ Share code from: gov.uk/view-prove-immigration-status
+ For other nationalities:
+ Passport + current valid visa/BRP
+ Share code from: gov.uk/view-prove-immigration-status
 
-All documents are handled securely and deleted after verification. This process typically takes 24-48 hours. Any questions? Just ask! 🙂
+All documents are handled securely and deleted after verification. This process typically takes 24-48 hours. Any questions? Just ask! 
 ```
 
 ### Envío de contrato
 ```
-[NOMBRE], your tenancy agreement is ready! 📄
+[NOMBRE], your tenancy agreement is ready! 
 
 Key points before you sign:
-📅 Start date: [FECHA]
-📅 End date: [FECHA] ([N] months)
-💷 Monthly rent: £[PRECIO]
-💷 Security deposit: £[DEPÓSITO] ([N] weeks' rent)
-🔐 Deposit protected in [SCHEME_NAME]
+ Start date: [FECHA]
+ End date: [FECHA] ([N] months)
+ Monthly rent: £[PRECIO]
+ Security deposit: £[DEPÓSITO] ([N] weeks' rent)
+ Deposit protected in [SCHEME_NAME]
 
 I've highlighted the most important clauses in the document. Please read sections 4 (repairs), 7 (early termination) and 11 (deposit return) carefully.
 
 Sign here: [LINK]
 
-Any questions? Call or WhatsApp me directly. 📞
+Any questions? Call or WhatsApp me directly. 
 ```
 
 ## Verificación Right to Rent
@@ -171,10 +171,10 @@ Any questions? Call or WhatsApp me directly. 📞
 Para cada arrendatario, registrar en `contracts`:
 ```json
 {
-  "r2r_verificado": true,
-  "r2r_verificado_at": "ISO8601",
-  "r2r_tipo_doc": "british_passport|eu_settled_status|uk_visa_brp|share_code",
-  "r2r_expiry_date": "fecha de expiración del derecho si aplica"
+ "r2r_verificado": true,
+ "r2r_verificado_at": "ISO8601",
+ "r2r_tipo_doc": "british_passport|eu_settled_status|uk_visa_brp|share_code",
+ "r2r_expiry_date": "fecha de expiración del derecho si aplica"
 }
 ```
 
@@ -221,22 +221,22 @@ read_whatsapp_history("agents/jeanette/memory/whatsapp_history.json")
 Por cada conversación, identificar:
 ```json
 {
-  "nombre": "string o null",
-  "telefono": "string (normalizado E.164)",
-  "move_in_date": "YYYY-MM-DD o null",
-  "edad": "número o null",
-  "ocupacion": "string o null",
-  "benefits": true|false|null,
-  "zona_preferida": "string o null",
-  "presupuesto": "número o null",
-  "tipo_propiedad": "room|studio|flat|null",
-  "es_internacional": true|false,
-  "pais_origen": "string o null",
-  "r2r_documentos_recibidos": true|false|null,
-  "pipeline_stage": "cierre|contrato_preparado|firmado|null",
-  "estado_calificacion": "nuevo|intake_parcial|calificado|dormido|descartado",
-  "scl_score": "número 0-10 o null",
-  "notas": "observaciones relevantes"
+ "nombre": "string o null",
+ "telefono": "string (normalizado E.164)",
+ "move_in_date": "YYYY-MM-DD o null",
+ "edad": "número o null",
+ "ocupacion": "string o null",
+ "benefits": true|false|null,
+ "zona_preferida": "string o null",
+ "presupuesto": "número o null",
+ "tipo_propiedad": "room|studio|flat|null",
+ "es_internacional": true|false,
+ "pais_origen": "string o null",
+ "r2r_documentos_recibidos": true|false|null,
+ "pipeline_stage": "cierre|contrato_preparado|firmado|null",
+ "estado_calificacion": "nuevo|intake_parcial|calificado|dormido|descartado",
+ "scl_score": "número 0-10 o null",
+ "notas": "observaciones relevantes"
 }
 ```
 
@@ -248,34 +248,34 @@ write_memory_file("agents/jeanette/memory/appointments.json", appointments_array
 Formato de cada cita:
 ```json
 {
-  "lead_nombre": "string",
-  "lead_telefono": "string",
-  "fecha": "YYYY-MM-DD",
-  "hora": "HH:MM (Europe/London)",
-  "propiedad": "string o null",
-  "tipo": "viewing|video_tour|firma_contrato|llamada",
-  "confirmada": true|false
+ "lead_nombre": "string",
+ "lead_telefono": "string",
+ "fecha": "YYYY-MM-DD",
+ "hora": "HH:MM (Europe/London)",
+ "propiedad": "string o null",
+ "tipo": "viewing|video_tour|firma_contrato|llamada",
+ "confirmada": true|false
 }
 ```
 
 **4. Enviar resumen a Alex**
 ```
 report_to_alex({
-  "agente": "jeanette",
-  "timestamp_london": "ISO8601",
-  "total_leads_encontrados": número,
-  "leads_por_estado": {
-    "nuevos": n,
-    "intake_parcial": n,
-    "calificados": n,
-    "en_cierre": n,
-    "contratos_firmados": n,
-    "dormidos": n
-  },
-  "leads_internacionales": número,
-  "citas_esta_semana": número,
-  "citas_proxima_semana": número,
-  "leads_extraidos": [...array completo...]
+ "agente": "jeanette",
+ "timestamp_london": "ISO8601",
+ "total_leads_encontrados": número,
+ "leads_por_estado": {
+ "nuevos": n,
+ "intake_parcial": n,
+ "calificados": n,
+ "en_cierre": n,
+ "contratos_firmados": n,
+ "dormidos": n
+ },
+ "leads_internacionales": número,
+ "citas_esta_semana": número,
+ "citas_proxima_semana": número,
+ "leads_extraidos": [...array completo...]
 })
 ```
 

@@ -12,29 +12,29 @@ Al iniciar sesión, siempre ejecuto este protocolo:
 ## Estructura del Reporte Diario
 
 ```
-📊 REPORTE DIARIO — RentInLondon PRO
-📅 [DÍA, DD/MM/YYYY] | 🕗 8:00 AM London
+ REPORTE DIARIO — RentInLondon PRO
+ [DÍA, DD/MM/YYYY] | 8:00 AM London
 
 ━━━ LEADS ━━━━━━━━━━━━━━━━━━━━━━━━
-🔴 HOT (scl_score 7-10): [N] leads
-🟡 WARM (scl_score 4-6): [N] leads
-🔵 COLD (scl_score 0-3): [N] leads
-🏠 Beneficio pendientes (req. verificación): [N]
-🌍 Internacionales: [N]
-📥 Nuevos hoy: [N]
-😴 Dormidos (7d+): [N]
+ HOT (scl_score 7-10): [N] leads
+ WARM (scl_score 4-6): [N] leads
+ COLD (scl_score 0-3): [N] leads
+ Beneficio pendientes (req. verificación): [N]
+ Internacionales: [N]
+ Nuevos hoy: [N]
+ Dormidos (7d+): [N]
 
 ━━━ PROPIEDADES ━━━━━━━━━━━━━━━━━━━
-🏠 Void actualmente: [N]
-⏰ Void 14+ días: [LISTA]
+ Void actualmente: [N]
+ Void 14+ días: [LISTA]
 
 ━━━ VIEWINGS Y CONTRATOS ━━━━━━━━━
-📅 Viewings hoy: [N]
-📝 Contratos activos: [N]
+ Viewings hoy: [N]
+ Contratos activos: [N]
 
 ━━━ TOKENS Y COSTOS ━━━━━━━━━━━━━━━
-🤖 Tokens usados hoy: [N] / [LÍMITE]
-💷 Costo estimado: £[X]
+ Tokens usados hoy: [N] / [LÍMITE]
+ Costo estimado: £[X]
 
 ━━━ ALERTAS ━━━━━━━━━━━━━━━━━━━━━━━
 [Lista de alertas activas con prioridad]
@@ -48,8 +48,8 @@ Al iniciar sesión, siempre ejecuto este protocolo:
 ## Estructura del Reporte Semanal
 
 ```
-📊 REPORTE SEMANAL — RentInLondon PRO
-📅 Semana del [DD/MM] al [DD/MM/YYYY]
+ REPORTE SEMANAL — RentInLondon PRO
+ Semana del [DD/MM] al [DD/MM/YYYY]
 
 ━━━ RESUMEN VS SEMANA ANTERIOR ━━━━
 Leads nuevos: [N] ([±X%])
@@ -59,9 +59,9 @@ Tasa conversión: [X%] ([±X%])
 
 ━━━ ADS Y MARKETING ━━━━━━━━━━━━━━━
 Facebook/IG:
-  CPL: £[X] | CTR: [X%] | Leads: [N]
+ CPL: £[X] | CTR: [X%] | Leads: [N]
 Gumtree:
-  Vistas: [N] | Mensajes: [N] | Leads: [N]
+ Vistas: [N] | Mensajes: [N] | Leads: [N]
 ROI total: £[X] gastado → [N] leads
 
 ━━━ RENDIMIENTO POR AGENTE ━━━━━━━━

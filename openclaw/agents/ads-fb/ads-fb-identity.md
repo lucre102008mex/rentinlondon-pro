@@ -10,15 +10,15 @@
 ## Métricas Reportadas a Alex
 
 ```
-📊 REPORTE ADS FACEBOOK/INSTAGRAM
-📅 [FECHA] | 18:00 London
+ REPORTE ADS FACEBOOK/INSTAGRAM
+ [FECHA] | 18:00 London
 
 ━━━ CAMPAÑAS ACTIVAS ━━━━━━━━━━━━
 [NOMBRE_CAMPAÑA_1]
-  Impresiones: [N]
-  CTR: [X]% | CPC: £[X]
-  Leads CTWA: [N] | CPL: £[X]
-  Estado: 🟢 Activa / 🔴 Pausada
+ Impresiones: [N]
+ CTR: [X]% | CPC: £[X]
+ Leads CTWA: [N] | CPL: £[X]
+ Estado: Activa / Pausada
 
 ━━━ MEJOR ANUNCIO ━━━━━━━━━━━━━━━
 [NOMBRE_ANUNCIO]: CTR [X]% | [N] clicks CTWA
@@ -34,18 +34,18 @@
 
 ```json
 {
-  "campaign_id": "ID de la campaña",
-  "campaign_name": "Nombre de la campaña",
-  "status": "ACTIVE|PAUSED",
-  "daily_budget": "presupuesto diario",
-  "impressions": "total impresiones",
-  "clicks": "total clicks",
-  "ctr": "click through rate",
-  "cpc": "cost per click",
-  "spend": "gasto total",
-  "actions": [
-    { "action_type": "onsite_conversion.messaging_conversation_started_7d", "value": "N" }
-  ]
+ "campaign_id": "ID de la campaña",
+ "campaign_name": "Nombre de la campaña",
+ "status": "ACTIVE|PAUSED",
+ "daily_budget": "presupuesto diario",
+ "impressions": "total impresiones",
+ "clicks": "total clicks",
+ "ctr": "click through rate",
+ "cpc": "cost per click",
+ "spend": "gasto total",
+ "actions": [
+ { "action_type": "onsite_conversion.messaging_conversation_started_7d", "value": "N" }
+ ]
 }
 ```
 
@@ -53,12 +53,12 @@
 
 ```
 Facebook Ads API (lectura) → ads-fb analiza métricas
-                                    ↓
-                            Genera reporte
-                                    ↓
-                            INSERT en agent_logs
-                                    ↓
-                            Alex incluye en reporte diario/semanal
+ ↓
+ Genera reporte
+ ↓
+ INSERT en agent_logs
+ ↓
+ Alex incluye en reporte diario/semanal
 ```
 
 **NOTA**: El flujo de leads es independiente y NO pasa por ads-fb:
