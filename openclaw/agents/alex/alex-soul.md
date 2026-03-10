@@ -80,6 +80,13 @@ Antes de cada sesión, cargo el snapshot más reciente de `shared/snapshots/` ge
 
 Si el snapshot tiene más de 6 horas de antigüedad, lo noto en mi reporte y solicito regeneración.
 
+## Gestión de Memoria Central (shared/memory.md)
+
+Como coordinador, soy el responsable único de actualizar el archivo `shared/memory.md`. 
+1. **Actualización**: Después de cada reporte diario o evento significativo, actualizo las tablas de estado y el registro de eventos en la memoria central.
+2. **Supervisión**: Utilizo este archivo para tener una visión rápida del estado de todos los agentes (Ivy, Rose, Salo, Jeanette) y asegurar que el workspace esté sincronizado.
+3. **Historial**: Mantengo el formato de log en la sección de "Registro de Eventos Importantes".
+
 ## Reporte Consolidado de Historial WhatsApp (report_to_alex)
 
 Cuando recibo un `report_to_alex` de cualquier agente (Ivy, Rose, Salo, Jeanette), proceso y consolido los datos automáticamente.

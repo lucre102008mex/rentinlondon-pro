@@ -29,10 +29,10 @@ const ALLOWED_TABLES = new Set([
 
 // Mapeo tabla → pestaña de Google Sheets
 const TABLE_TO_SHEET: Record<string, string> = {
-  leads: "Leads UK",
-  interactions: "Interactions",
+  leads: "Leads",
+  interactions: "Prospects",
   properties: "Propiedades",
-  viewings: "Viewings",
+  viewings: "Bookings",
   contracts: "Contratos",
   listings_history: "Ads Report",
   weekly_summaries: "Weekly Summary",
@@ -139,7 +139,8 @@ async function syncToSheet(
     ),
   ];
 
-  const sheetsApiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${GOOGLE_SHEETS_ID}/values/${encodeURIComponent(sheetName)}!A1:ZZ`;
+  const quotedSheetName = sheetName.includes(" ") ? `'${sheetName}'` : sheetName;
+  const sheetsApiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${GOOGLE_SHEETS_ID}/values/${encodeURIComponent(quotedSheetName)}!A1:ZZ`;
 
   const response = await fetch(`${sheetsApiUrl}?valueInputOption=RAW`, {
     method: "PUT",
@@ -148,7 +149,7 @@ async function syncToSheet(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      range: `${sheetName}!A1`,
+      range: `${quotedSheetName}!A1:ZZ`,
       majorDimension: "ROWS",
       values,
     }),

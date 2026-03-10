@@ -110,6 +110,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS trg_leads_scl_score ON public.leads;
 CREATE TRIGGER trg_leads_scl_score
   BEFORE INSERT OR UPDATE OF fecha_mudanza, response_speed_minutes, budget_fit, data_completeness, wab_engagement_count
   ON public.leads
@@ -172,6 +173,7 @@ ORDER BY tiene_match_inmediato DESC, l.scl_score DESC, l.ultima_interaccion ASC;
 -- -----------------------------------------------------------------------------
 
 -- Matching entre leads con beneficio y propiedades que los aceptan
+DROP VIEW IF EXISTS public.v_match_dss CASCADE;
 CREATE OR REPLACE VIEW public.v_match_dss AS
 SELECT
   l.id AS lead_id, l.nombre, l.telefono, l.zona_preferida, l.tipo_propiedad,
@@ -212,6 +214,7 @@ SELECT
 -- 1h. Actualizar v_leads_dormantes (añadir scl_score)
 -- -----------------------------------------------------------------------------
 
+DROP VIEW IF EXISTS public.v_leads_dormantes CASCADE;
 CREATE OR REPLACE VIEW public.v_leads_dormantes AS
 SELECT
   l.id, l.nombre, l.telefono, l.canal_origen,
