@@ -35,7 +35,7 @@ Sistema de gestión inmobiliaria de nivel agencia internacional con **8 agentes 
 │                    ▼               ▼               ▼                          │
 │             ┌────────────┐  ┌───────────┐  ┌────────────┐                    │
 │             │  SUPABASE  │  │  GOOGLE   │  │ WHATSAPP   │                    │
-│             │ PostgreSQL │  │  SHEETS   │  │   API      │                    │
+│             │ PostgreSQL │  │  SHEETS   │  │ (wacli/QR) │                    │
 │             │ RLS x rol  │  │ CRM visual│  │ (canales)  │                    │
 │             │ Edge Funcs │  │ 7 pestañas│  │            │                    │
 │             └─────┬──────┘  └───────────┘  └────────────┘                    │
@@ -146,7 +146,7 @@ rentinlondon-pro/
 - Ubuntu 22.04 LTS (VPS o servidor dedicado)
 - Cuenta en [Supabase](https://supabase.com)
 - Cuenta en [Google Cloud Console](https://console.cloud.google.com)
-- Cuenta en [Meta Business](https://business.facebook.com) (para WhatsApp API)
+- Cuenta en [Meta Business](https://business.facebook.com) (para gestión de campañas de ads — los leads llegan vía CTWA, no por API)
 - Cuenta en [Tailscale](https://tailscale.com)
 - Node.js 20+ (se instala en Fase 2)
 
@@ -258,9 +258,7 @@ WEBHOOK_HMAC_SECRET=genera_con_openssl_rand_hex_32
 GATEWAY_PORT=3000
 SUPABASE_URL=https://TUPROYECTO.supabase.co
 SUPABASE_ANON_KEY=tu_anon_key
-WHATSAPP_API_URL=https://graph.facebook.com/v18.0
-WHATSAPP_TOKEN=tu_whatsapp_business_token
-WHATSAPP_PHONE_ID=tu_phone_number_id
+# WhatsApp se gestiona vía wacli (sesión QR en OpenClaw). No requiere tokens de Meta.
 TELEGRAM_BOT_TOKEN=tu_telegram_bot_token
 TELEGRAM_CHAT_ID=chat_id_del_dueno
 HMAC_SECRET=misma_clave_que_supabase_hmac_secret
@@ -464,8 +462,8 @@ curl -X POST https://TUPROYECTO.supabase.co/functions/v1/webhook-receiver \
 | **Rose**         | WhatsApp    | UK leads de ads, seguimientos                    | Leads UK + interactions |
 | **Salo**         | WhatsApp    | UK leads de marketplaces, intake rápido          | Leads UK + interactions |
 | **Jeanette**     | WhatsApp    | UK + internacionales, contratos remotos, R2R     | Leads + contratos       |
-| **ads-fb**       | Webhook     | Facebook/Instagram campaigns, CPL/CTR            | Insertar leads FB       |
-| **ads-gumtree**  | Webhook     | Gumtree listings, vistas/mensajes                | Insertar leads Gumtree  |
+| **ads-fb**       | Internal    | Gestión campañas Facebook/Instagram, CPL/CTR     | Solo lectura + logs     |
+| **ads-gumtree**  | Internal    | Gestión listings marketplaces, vistas/mensajes   | Listings + logs         |
 | **script-runner**| Internal    | Normalización, reactivación (con aprobación)     | Vistas + agent_logs     |
 
 ---

@@ -2,52 +2,11 @@
 
 ## Protocolo de Activación
 
-### Modo webhook (lead de marketplace)
-1. Recibir POST en `/webhooks/gumtree` (o plataforma correspondiente)
-2. Verificar `X-Signature` con HMAC
-3. Parsear datos del prospecto
-4. Crear lead en Supabase con canal correcto
-5. Asignar a Salo
-6. Notificar via `agent_logs`
-
 ### Modo programado
 - Lunes y Jueves 11:00 London → Refresh de todos los listados activos
 - Diario 17:00 London → Reporte de rendimiento de listings
 
-## Payload de Lead de Marketplace
-
-```json
-{
-  "platform": "gumtree",
-  "listing_id": "ID del anuncio en la plataforma",
-  "property_id": "UUID de la propiedad en nuestra DB",
-  "prospect_name": "Nombre del contacto",
-  "prospect_email": "email@example.com",
-  "prospect_phone": "+44...",
-  "message": "Mensaje del prospecto",
-  "listing_url": "https://gumtree.com/...",
-  "inquiry_timestamp": "ISO8601"
-}
-```
-
-### Lead insertado en Supabase
-```json
-{
-  "nombre": "Nombre del contacto",
-  "telefono": "+44...",
-  "email": "email@example.com",
-  "canal_origen": "gumtree",
-  "asignado_a": "salo",
-  "lead_origin_details": {
-    "platform": "gumtree",
-    "listing_id": "...",
-    "property_id": "UUID",
-    "listing_url": "https://...",
-    "original_message": "...",
-    "inquiry_timestamp": "ISO8601"
-  }
-}
-```
+**NOTA**: ads-gumtree NO tiene modo webhook para captura de leads. Los leads de marketplaces llegan directamente a Salo cuando el prospecto contacta por WhatsApp desde el número publicado en el anuncio.
 
 ## Proceso de Refresh de Listings
 
@@ -88,8 +47,7 @@
 
 ━━━ RESUMEN ━━━━━━━━━━━━━━━━━━━━━
 Total propiedades listadas: [N]
-Total leads generados hoy: [N]
-Mejor plataforma: [NOMBRE] ([N] leads)
+Mejor plataforma: [NOMBRE] (más engagement)
 
 ━━━ ALERTAS Y RECOMENDACIONES ━━
 [Listados con bajo rendimiento]
@@ -127,9 +85,28 @@ Reference: [ID interno]
 - "English speakers only"
 - "No [cualquier grupo protegido]"
 
+## Flujo de Datos (Solo Gestión de Listings)
+
+```
+properties (Supabase) → ads-gumtree lee propiedades disponibles
+                              ↓
+                      Publica/Refresca en plataformas
+                              ↓
+                      Actualiza listings_history
+                              ↓
+                      Genera reporte → agent_logs
+                              ↓
+                      Alex incluye en reporte diario/semanal
+```
+
+**NOTA**: El flujo de leads es independiente y NO pasa por ads-gumtree:
+```
+Anuncio en marketplace → Prospecto ve número de WhatsApp → Contacta directo → Salo recibe vía wacli
+```
+
 ## Actualización de `listings_history`
 
-Cada acción en plataformas externa se registra:
+Cada acción en plataformas externas se registra:
 ```json
 {
   "property_id": "UUID",
@@ -154,7 +131,7 @@ Cada acción en plataformas externa se registra:
 INMUTABLE — NO MODIFICAR
 - Ads-Gumtree nunca publica anuncios con texto discriminatorio
 - Ads-Gumtree nunca accede a contratos ni datos personales de arrendatarios
-- Ads-Gumtree solo inserta leads con canal_origen de marketplace
+- Ads-Gumtree nunca inserta, modifica ni lee datos de leads individuales
 - Ads-Gumtree siempre verifica disponibilidad de propiedad antes de publicar
 - Ads-Gumtree siempre pausa listados cuando propiedad.estado = 'let'
 - Ads-Gumtree registra TODAS las acciones en listings_history y agent_logs

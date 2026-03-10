@@ -22,12 +22,9 @@ database:
 # ─── Canales de comunicación compartidos ──────────────────────────────────────
 channels:
   whatsapp:
-    provider: meta
-    api_url: ${WHATSAPP_API_URL}
-    token: ${WHATSAPP_TOKEN}
-    phone_id: ${WHATSAPP_PHONE_ID}
-    verify_token: ${WHATSAPP_VERIFY_TOKEN}
-    webhook_path: /webhooks/whatsapp
+    provider: wacli
+    # wacli gestiona la sesión QR internamente en OpenClaw
+    # No requiere api_url, token ni phone_id de Meta
   telegram:
     provider: telegram
     bot_token: ${TELEGRAM_BOT_TOKEN}
@@ -97,6 +94,9 @@ agents:
       - supabase_write_logs
       - schedule_viewing
       - escalate_to_jeanette
+      - read_whatsapp_history   # Lee agents/ivy/memory/whatsapp_history.json
+      - write_memory_file       # Escribe en agents/ivy/memory/
+      - report_to_alex          # Envía resumen de leads y citas a Alex vía internal
     triggers:
       - event: whatsapp.message.received
         filter: "lead.canal_origen = 'whatsapp' AND lead.es_internacional = false"
@@ -128,6 +128,9 @@ agents:
       - supabase_write_logs
       - schedule_viewing
       - escalate_to_jeanette
+      - read_whatsapp_history   # Lee agents/rose/memory/whatsapp_history.json
+      - write_memory_file       # Escribe en agents/rose/memory/
+      - report_to_alex          # Envía resumen de leads y citas a Alex vía internal
     triggers:
       - event: lead.created
         filter: "canal_origen IN ('facebook','instagram') AND es_internacional = false"
@@ -159,6 +162,9 @@ agents:
       - supabase_write_logs
       - quick_qualify
       - escalate_to_jeanette
+      - read_whatsapp_history   # Lee agents/salo/memory/whatsapp_history.json
+      - write_memory_file       # Escribe en agents/salo/memory/
+      - report_to_alex          # Envía resumen de leads y citas a Alex vía internal
     triggers:
       - event: lead.created
         filter: "canal_origen IN ('gumtree','rightmove','zoopla','spareroom','openrent') AND es_internacional = false"
@@ -194,6 +200,9 @@ agents:
       - send_contract
       - request_r2r_documents
       - escalate_to_human
+      - read_whatsapp_history   # Lee agents/jeanette/memory/whatsapp_history.json
+      - write_memory_file       # Escribe en agents/jeanette/memory/
+      - report_to_alex          # Envía resumen de leads, citas y contratos a Alex vía internal
     triggers:
       - event: lead.escalated
         filter: "escalado_jeanette = true"
@@ -212,13 +221,16 @@ agents:
 # SUB-AGENTES (bajo consumo de tokens)
 # =============================================================================
 
-  # ─── ADS-FB: Facebook/Instagram Campaigns ────────────────────────────────────
+  # ─── ADS-FB: Gestión de Campañas Facebook/Instagram ──────────────────────────
+  # NOTA: ads-fb NO captura leads. Los leads llegan directamente a las agentes
+  # (Rose/Ivy) vía Click-to-WhatsApp (CTWA) en los anuncios.
+  # ads-fb gestiona campañas, mide rendimiento y reporta métricas.
   - id: ads-fb
     name: Ads-FB
-    role: facebook_ads_manager
+    role: facebook_ads_campaign_manager
     soul: agents/ads-fb/ads-fb-soul.md
     identity: agents/ads-fb/ads-fb-identity.md
-    channel: webhook
+    channel: internal
     active: true
     llm:
       model: ${LLM_MODEL_ADSFB:-gpt-4o-mini}
@@ -226,13 +238,9 @@ agents:
       max_tokens: 1024
     tools:
       - facebook_ads_api_read
-      - supabase_leads_fb_insert
+      - supabase_read_views
       - supabase_write_logs
-      - derive_to_whatsapp
       - generate_ads_report
-    triggers:
-      - event: facebook.lead.form_submitted
-      - event: facebook.message.received
     schedule:
       ads_report: "0 18 * * * Europe/London"
     rate_limits:
@@ -241,16 +249,19 @@ agents:
     db_role: ads_fb_role
     restrictions:
       - no_contract_access
-      - no_direct_whatsapp_messaging
-      - insert_leads_facebook_only
+      - no_lead_capture
+      - campaign_reporting_only
 
-  # ─── ADS-GUMTREE: Gumtree/Marketplace Listings ───────────────────────────────
+  # ─── ADS-GUMTREE: Gestión de Listings en Marketplaces ────────────────────────
+  # NOTA: ads-gumtree NO captura leads. Los leads llegan directamente a Salo
+  # cuando el prospecto contacta por WhatsApp desde el anuncio del marketplace.
+  # ads-gumtree gestiona listings: publicar, refrescar, pausar y reportar.
   - id: ads-gumtree
     name: Ads-Gumtree
     role: marketplace_listings_manager
     soul: agents/ads-gumtree/ads-gumtree-soul.md
     identity: agents/ads-gumtree/ads-gumtree-identity.md
-    channel: webhook
+    channel: internal
     active: true
     llm:
       model: ${LLM_MODEL_GUMTREE:-gpt-4o-mini}
@@ -260,10 +271,9 @@ agents:
       - gumtree_api
       - rightmove_api_read
       - zoopla_api_read
-      - supabase_leads_marketplace_insert
       - supabase_listings_history_rw
+      - supabase_read_views
       - supabase_write_logs
-      - derive_to_whatsapp
       - refresh_listing
     schedule:
       listings_refresh: "0 11 * * 1,4 Europe/London"
@@ -274,8 +284,8 @@ agents:
     db_role: ads_gumtree_role
     restrictions:
       - no_contract_access
-      - no_direct_whatsapp_messaging
-      - insert_leads_marketplace_only
+      - no_lead_capture
+      - listings_management_only
 
   # ─── SCRIPT-RUNNER: Tareas Internas ──────────────────────────────────────────
   - id: script-runner

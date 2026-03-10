@@ -2,24 +2,25 @@
 
 ## Protocolo de Activación
 
-Al recibir notificación de lead nuevo de ads (Facebook/Instagram):
-1. Verificar datos del lead en `leads` (canal_origen = 'facebook' o 'instagram')
-2. Cargar `lead_origin_details` para contexto del anuncio
-3. Verificar que no hay otro agente activo en este lead
-4. Enviar mensaje de contacto inicial personalizado
+Al recibir un mensaje de WhatsApp de un prospecto que viene de un anuncio de Facebook/Instagram (CTWA):
+1. Identificar que el lead viene de ads por el contexto del mensaje inicial (texto CTWA prefabricado)
+2. Registrar lead en Supabase con `canal_origen = 'facebook'` o `'instagram'`
+3. Verificar que no existe duplicado por teléfono
+4. Iniciar protocolo de calificación SCL inmediatamente
 
 ## Flujo de Contacto Ads
 
 ```
-[Lead de ads creado por ads-fb]
+[Lead hace clic en CTWA del anuncio FB/IG]
        ↓
-Cargar lead_origin_details
-(campaña, anuncio, propiedad)
+Llega mensaje directo por WhatsApp (wacli)
        ↓
-Contacto en < 30 minutos
+Rose recibe y registra lead en Supabase
        ↓
-¿Responde en 24h?
-    ↓ SÍ              ↓ NO
+Inicio de calificación SCL
+       ↓
+¿Responde a preguntas de calificación?
+    ↓ SÍ              ↓ NO (24h)
   Intake completo    Follow-up 1
        ↓                  ↓
   Scoring auto       ¿Responde en 72h?
@@ -89,11 +90,11 @@ Would you like to schedule a viewing? I can book one for [DÍA 1] or [DÍA 2]. W
 }
 ```
 
-## SCL en WhatsApp Business (WAB)
+## SCL en WhatsApp (wacli)
 
-Facebook/Instagram captan el lead → el lead es derivado a WAB → la calificación SCL ocurre en WAB.
+El anuncio de Facebook/Instagram capta el lead vía CTWA → el lead llega directo a Rose por WhatsApp (wacli) → la calificación SCL ocurre en la conversación.
 
-Rose aplica los 5 factores del SCL vía WhatsApp Business:
+Rose aplica los 5 factores del SCL vía WhatsApp:
 - F1: Urgencia (fecha de mudanza)
 - F2: Velocidad de respuesta en WAB
 - F3: Ajuste de presupuesto al mercado
@@ -135,3 +136,78 @@ INMUTABLE — NO MODIFICAR
 - Rose siempre personaliza el primer mensaje con contexto del anuncio
 - Rose registra TODAS las interacciones en la base de datos
 ```
+
+## Protocolo: Análisis de Historial WhatsApp → Reporte a Alex
+
+### Cuándo ejecutar
+- Bajo demanda (cuando Alex o el dueño lo solicita)
+- Al finalizar cada semana (viernes 6 PM London, automático)
+
+### Pasos
+
+**1. Leer historial**
+```
+read_whatsapp_history("agents/rose/memory/whatsapp_history.json")
+```
+
+**2. Extraer cada lead encontrado**
+Por cada conversación, identificar:
+```json
+{
+  "nombre": "string o null",
+  "telefono": "string (normalizado E.164)",
+  "move_in_date": "YYYY-MM-DD o null",
+  "edad": "número o null",
+  "ocupacion": "string o null",
+  "benefits": true|false|null,
+  "zona_preferida": "string o null",
+  "presupuesto": "número o null",
+  "tipo_propiedad": "room|studio|flat|null",
+  "canal_origen": "facebook|instagram",
+  "estado_calificacion": "nuevo|intake_parcial|calificado|dormido|descartado",
+  "scl_score": "número 0-10 o null",
+  "notas": "observaciones relevantes"
+}
+```
+
+**3. Guardar citas (esta semana + próxima)**
+```
+write_memory_file("agents/rose/memory/appointments.json", appointments_array)
+```
+
+Formato de cada cita:
+```json
+{
+  "lead_nombre": "string",
+  "lead_telefono": "string",
+  "fecha": "YYYY-MM-DD",
+  "hora": "HH:MM (Europe/London)",
+  "propiedad": "string o null",
+  "tipo": "viewing|video_tour|llamada",
+  "confirmada": true|false
+}
+```
+
+**4. Enviar resumen a Alex**
+```
+report_to_alex({
+  "agente": "rose",
+  "timestamp_london": "ISO8601",
+  "total_leads_encontrados": número,
+  "leads_por_estado": {
+    "nuevos": n,
+    "intake_parcial": n,
+    "calificados": n,
+    "dormidos": n,
+    "descartados": n
+  },
+  "citas_esta_semana": número,
+  "citas_proxima_semana": número,
+  "leads_extraidos": [...array completo...]
+})
+```
+
+### Restricciones
+- Si `whatsapp_history.json` no existe: reportar a Alex "No history file found" y detener
+- No inventar datos — `null` si no se menciona en la conversación
+- No modificar Supabase en este proceso (solo lectura + escritura en memory/)

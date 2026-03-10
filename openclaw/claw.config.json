@@ -96,35 +96,20 @@
     },
     {
       "agent": "ads-fb",
-      "channel": "webhook",
+      "channel": "internal",
       "hooks": {
-        "on_webhook": "agents/ads-fb/ads-fb-identity.md",
-        "on_lead_created": "derive_to_whatsapp_intake",
         "on_schedule": "generate_ads_report"
       },
-      "hmac": {
-        "enabled": true,
-        "header": "X-Hub-Signature-256",
-        "algorithm": "sha256",
-        "secret_env": "HMAC_SECRET"
-      },
-      "webhook_path": "/webhooks/facebook"
+      "comment": "ads-fb NO captura leads. Gestiona campañas FB/IG y reporta métricas. Los leads llegan directo a Rose/Ivy vía CTWA."
     },
     {
       "agent": "ads-gumtree",
-      "channel": "webhook",
+      "channel": "internal",
       "hooks": {
-        "on_webhook": "agents/ads-gumtree/ads-gumtree-identity.md",
-        "on_lead_created": "derive_to_whatsapp_intake",
-        "on_schedule_refresh": "refresh_all_listings"
+        "on_schedule_refresh": "refresh_all_listings",
+        "on_schedule_report": "generate_listings_report"
       },
-      "hmac": {
-        "enabled": true,
-        "header": "X-Signature",
-        "algorithm": "sha256",
-        "secret_env": "HMAC_SECRET"
-      },
-      "webhook_path": "/webhooks/gumtree"
+      "comment": "ads-gumtree NO captura leads. Gestiona listings en marketplaces. Los leads llegan directo a Salo vía WhatsApp desde el anuncio."
     },
     {
       "agent": "script-runner",

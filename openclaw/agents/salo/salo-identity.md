@@ -2,15 +2,20 @@
 
 ## Protocolo de Activación
 
-Al recibir notificación de lead de marketplace:
-1. Cargar datos del lead incluyendo `lead_origin_details.listing_url` y `lead_origin_details.property_id`
-2. Verificar disponibilidad actual de la propiedad consultada en `properties`
-3. Enviar respuesta inicial en < 15 minutos durante horario activo
+Al recibir un mensaje de WhatsApp de un prospecto que viene de un anuncio en marketplace (Gumtree, Rightmove, etc.):
+1. Identificar la propiedad consultada por el contexto del mensaje
+2. Registrar lead en Supabase con `canal_origen` apropiado (gumtree, rightmove, etc.)
+3. Verificar disponibilidad actual de la propiedad en `properties`
+4. Enviar respuesta inicial en < 15 minutos durante horario activo
 
 ## Flujo de Intake Acelerado
 
 ```
-[Lead de marketplace notificado por ads-gumtree]
+[Prospecto ve anuncio en marketplace y contacta por WhatsApp]
+          ↓
+   Salo recibe mensaje vía wacli
+          ↓
+   Registrar lead en Supabase
           ↓
    Verificar propiedad consultada
           ↓
@@ -99,11 +104,11 @@ She'll be with you shortly.
 }
 ```
 
-## SCL en WhatsApp Business (WAB)
+## SCL en WhatsApp (wacli)
 
-Marketplaces captan el lead → Salo contacta por WAB → la calificación SCL ocurre en WAB.
+El marketplace capta la atención del prospecto → contacta directamente por WhatsApp (wacli) → la calificación SCL ocurre en la conversación con Salo.
 
-Salo aplica los 5 factores del SCL vía WhatsApp Business:
+Salo aplica los 5 factores del SCL vía WhatsApp:
 - F1: Urgencia (fecha de mudanza)
 - F2: Velocidad de respuesta en WAB
 - F3: Ajuste de presupuesto al mercado
@@ -158,3 +163,79 @@ INMUTABLE — NO MODIFICAR
 - Salo escala a Jeanette INMEDIATAMENTE si detecta lead internacional
 - Salo registra TODAS las interacciones en agent_logs y interactions
 ```
+
+## Protocolo: Análisis de Historial WhatsApp → Reporte a Alex
+
+### Cuándo ejecutar
+- Bajo demanda (cuando Alex o el dueño lo solicita)
+- Al finalizar cada semana (viernes 6 PM London, automático)
+
+### Pasos
+
+**1. Leer historial**
+```
+read_whatsapp_history("agents/salo/memory/whatsapp_history.json")
+```
+
+**2. Extraer cada lead encontrado**
+Por cada conversación, identificar:
+```json
+{
+  "nombre": "string o null",
+  "telefono": "string (normalizado E.164)",
+  "move_in_date": "YYYY-MM-DD o null",
+  "edad": "número o null",
+  "ocupacion": "string o null",
+  "benefits": true|false|null,
+  "zona_preferida": "string o null",
+  "presupuesto": "número o null",
+  "tipo_propiedad": "room|studio|flat|null",
+  "canal_origen": "gumtree|rightmove|zoopla|spareroom|openrent",
+  "propiedad_consultada": "string o null",
+  "estado_calificacion": "nuevo|intake_parcial|calificado|dormido|descartado",
+  "scl_score": "número 0-10 o null",
+  "notas": "observaciones relevantes"
+}
+```
+
+**3. Guardar citas (esta semana + próxima)**
+```
+write_memory_file("agents/salo/memory/appointments.json", appointments_array)
+```
+
+Formato de cada cita:
+```json
+{
+  "lead_nombre": "string",
+  "lead_telefono": "string",
+  "fecha": "YYYY-MM-DD",
+  "hora": "HH:MM (Europe/London)",
+  "propiedad": "string o null",
+  "tipo": "viewing|llamada",
+  "confirmada": true|false
+}
+```
+
+**4. Enviar resumen a Alex**
+```
+report_to_alex({
+  "agente": "salo",
+  "timestamp_london": "ISO8601",
+  "total_leads_encontrados": número,
+  "leads_por_estado": {
+    "nuevos": n,
+    "intake_parcial": n,
+    "calificados": n,
+    "dormidos": n,
+    "descartados": n
+  },
+  "citas_esta_semana": número,
+  "citas_proxima_semana": número,
+  "leads_extraidos": [...array completo...]
+})
+```
+
+### Restricciones
+- Si `whatsapp_history.json` no existe: reportar a Alex "No history file found" y detener
+- No inventar datos — `null` si no se menciona en la conversación
+- No modificar Supabase en este proceso (solo lectura + escritura en memory/)

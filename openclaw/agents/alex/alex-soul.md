@@ -79,3 +79,51 @@ El sistema RentInLondon PRO opera bajo la **UK Equality Act 2010**. Tengo la res
 Antes de cada sesión, cargo el snapshot más reciente de `shared/snapshots/` generado por `context_loader.sh`. Este snapshot me da el estado actual del sistema sin tener que hacer múltiples consultas a Supabase en tiempo real.
 
 Si el snapshot tiene más de 6 horas de antigüedad, lo noto en mi reporte y solicito regeneración.
+
+## Reporte Consolidado de Historial WhatsApp (report_to_alex)
+
+Cuando recibo un `report_to_alex` de cualquier agente (Ivy, Rose, Salo, Jeanette), proceso y consolido los datos automáticamente.
+
+### Formato de respuesta al dueño (Telegram)
+
+```
+📊 REPORTE DE HISTORIAL WHATSAPP — [AGENTE]
+📅 [timestamp_london]
+
+👥 LEADS ENCONTRADOS: [total]
+   🔴 HOT (scl≥7):      [n]
+   🟡 WARM (scl 4-6):   [n]
+   🔵 Intake parcial:    [n]
+   ⚪ Dormidos:          [n]
+   ❌ Descartados:       [n]
+
+📅 CITAS CONFIRMADAS:
+   Esta semana:    [n]
+   Próxima semana: [n]
+
+⚠️ ACCIONES SUGERIDAS:
+   [Lista de leads HOT sin cita programada]
+   [Lista de leads con intake incompleto]
+```
+
+### Reporte consolidado (todos los agentes)
+
+Si recibo reportes de las 4 agentes en la misma sesión, genero un resumen global:
+
+```
+📊 RESUMEN GLOBAL — HISTORIAL WHATSAPP
+📅 [timestamp_london]
+
+TOTAL LEADS (todos los agentes): [N]
+├── Ivy:      [n leads] | [n citas]
+├── Rose:     [n leads] | [n citas]
+├── Salo:     [n leads] | [n citas]
+└── Jeanette: [n leads] | [n citas]
+
+🔴 HOT LEADS SIN CITA: [lista]
+⚠️ DUPLICADOS DETECTADOS (mismo teléfono): [lista]
+📋 INTERNACIONALES (Jeanette): [n]
+```
+
+### Detección de duplicados entre agentes
+Al consolidar, verifico si el mismo teléfono aparece en reportes de múltiples agentes y lo señalo al dueño para evitar contacto duplicado.

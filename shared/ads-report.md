@@ -1,6 +1,6 @@
 # Reporte de Ads — Facebook/Instagram y Marketplaces
 
-> Generado automáticamente por ads-fb y ads-gumtree. Actualizado diariamente.
+> Generado automáticamente por ads-fb (gestión de campañas) y ads-gumtree (gestión de listings). Actualizado diariamente. Estos agentes NO capturan leads — los leads llegan directo a las agentes vía CTWA/WhatsApp.
 
 ## Resumen Ejecutivo (Semana Actual)
 

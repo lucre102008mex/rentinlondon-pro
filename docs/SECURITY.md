@@ -13,7 +13,7 @@
 │    Tailscale VPN → Acceso administrativo seguro             │
 │                                                              │
 │  Capa 2: TRANSPORTE                                          │
-│    HTTPS/TLS → Todo el tráfico hacia Supabase/Meta          │
+│    HTTPS/TLS → Todo el tráfico hacia Supabase               │
 │    HMAC SHA-256 → Todos los webhooks entrantes              │
 │    JWT RS256 → Edge Functions → Google Sheets               │
 │                                                              │
@@ -46,7 +46,7 @@
 | `SUPABASE_SERVICE_ROLE_KEY` | Edge Functions únicamente | MÁXIMO | Supabase Dashboard |
 | `WEBHOOK_HMAC_SECRET` | Todos los webhooks | Alto | `openssl rand -hex 32` |
 | `GOOGLE_SA_PRIVATE_KEY` | sync-to-sheets Edge Fn | Alto | Google Cloud Console |
-| `WHATSAPP_TOKEN` | Agentes WhatsApp | Alto | Meta Business |
+| `WHATSAPP_TOKEN` | N/A (se usa wacli/QR) | N/A | Sesión QR en OpenClaw |
 | `TELEGRAM_BOT_TOKEN` | Alex únicamente | Alto | @BotFather en Telegram |
 
 ### Reglas de Manejo de Claves

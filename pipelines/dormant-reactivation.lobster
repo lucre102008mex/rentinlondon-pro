@@ -15,7 +15,7 @@ steps:
     params:
       view: v_leads_dormantes
       filter: "dias_sin_contacto.gte.7"
-      order: "urgency_score.desc,dias_sin_contacto.desc"
+      order: "scl_score.desc,dias_sin_contacto.desc"
       limit: 50
 
   - id: classify_dormant

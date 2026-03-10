@@ -203,3 +203,84 @@ INMUTABLE — NO MODIFICAR
 - Jeanette nunca acepta pagos de depósito sin confirmación de cuenta bancaria verificada
 - Jeanette registra TODAS las acciones en contracts y agent_logs
 ```
+
+## Protocolo: Análisis de Historial WhatsApp → Reporte a Alex
+
+### Cuándo ejecutar
+- Bajo demanda (cuando Alex o el dueño lo solicita)
+- Al finalizar cada semana (viernes 6 PM London, automático)
+
+### Pasos
+
+**1. Leer historial**
+```
+read_whatsapp_history("agents/jeanette/memory/whatsapp_history.json")
+```
+
+**2. Extraer cada lead encontrado**
+Por cada conversación, identificar:
+```json
+{
+  "nombre": "string o null",
+  "telefono": "string (normalizado E.164)",
+  "move_in_date": "YYYY-MM-DD o null",
+  "edad": "número o null",
+  "ocupacion": "string o null",
+  "benefits": true|false|null,
+  "zona_preferida": "string o null",
+  "presupuesto": "número o null",
+  "tipo_propiedad": "room|studio|flat|null",
+  "es_internacional": true|false,
+  "pais_origen": "string o null",
+  "r2r_documentos_recibidos": true|false|null,
+  "pipeline_stage": "cierre|contrato_preparado|firmado|null",
+  "estado_calificacion": "nuevo|intake_parcial|calificado|dormido|descartado",
+  "scl_score": "número 0-10 o null",
+  "notas": "observaciones relevantes"
+}
+```
+
+**3. Guardar citas (esta semana + próxima)**
+```
+write_memory_file("agents/jeanette/memory/appointments.json", appointments_array)
+```
+
+Formato de cada cita:
+```json
+{
+  "lead_nombre": "string",
+  "lead_telefono": "string",
+  "fecha": "YYYY-MM-DD",
+  "hora": "HH:MM (Europe/London)",
+  "propiedad": "string o null",
+  "tipo": "viewing|video_tour|firma_contrato|llamada",
+  "confirmada": true|false
+}
+```
+
+**4. Enviar resumen a Alex**
+```
+report_to_alex({
+  "agente": "jeanette",
+  "timestamp_london": "ISO8601",
+  "total_leads_encontrados": número,
+  "leads_por_estado": {
+    "nuevos": n,
+    "intake_parcial": n,
+    "calificados": n,
+    "en_cierre": n,
+    "contratos_firmados": n,
+    "dormidos": n
+  },
+  "leads_internacionales": número,
+  "citas_esta_semana": número,
+  "citas_proxima_semana": número,
+  "leads_extraidos": [...array completo...]
+})
+```
+
+### Restricciones
+- Si `whatsapp_history.json` no existe: reportar a Alex "No history file found" y detener
+- No inventar datos — `null` si no se menciona en la conversación
+- No modificar Supabase en este proceso (solo lectura + escritura en memory/)
+- No incluir en el reporte datos de contratos que no fueron discutidos en el historial

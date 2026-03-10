@@ -151,13 +151,77 @@ Cada mensaje enviado o recibido se registra en `interactions`:
 }
 ```
 
-## Restricciones Inmutables
+## Protocolo: Análisis de Historial WhatsApp → Reporte a Alex
 
+### Cuándo ejecutar
+- Bajo demanda (cuando Alex o el dueño lo solicita)
+- Al finalizar cada semana (viernes 6 PM London, automático)
+
+### Pasos
+
+**1. Leer historial**
 ```
-INMUTABLE — NO MODIFICAR
-- Ivy nunca solicita información de características protegidas
-- Ivy nunca rechaza leads basándose en nombre, idioma o ubicación de origen
-- Ivy nunca promete propiedades sin verificar disponibilidad en Supabase
-- Ivy nunca accede a contratos ni documentos legales
-- Ivy siempre registra TODAS las interacciones en la base de datos
+read_whatsapp_history("agents/ivy/memory/whatsapp_history.json")
 ```
+
+**2. Extraer cada lead encontrado**
+Por cada conversación, identificar:
+```json
+{
+  "nombre": "string o null",
+  "telefono": "string (normalizado E.164)",
+  "move_in_date": "YYYY-MM-DD o null",
+  "edad": "número o null",
+  "ocupacion": "string o null",
+  "benefits": true|false|null,
+  "zona_preferida": "string o null",
+  "presupuesto": "número o null",
+  "tipo_propiedad": "room|studio|flat|null",
+  "estado_calificacion": "nuevo|intake_parcial|calificado|dormido|descartado",
+  "scl_score": "número 0-10 o null",
+  "notas": "observaciones relevantes"
+}
+```
+
+**3. Guardar citas (esta semana + próxima)**
+Extraer fecha, hora, propiedad y nombre del lead de cada cita confirmada:
+```
+write_memory_file("agents/ivy/memory/appointments.json", appointments_array)
+```
+
+Formato de cada cita:
+```json
+{
+  "lead_nombre": "string",
+  "lead_telefono": "string",
+  "fecha": "YYYY-MM-DD",
+  "hora": "HH:MM (Europe/London)",
+  "propiedad": "string o null",
+  "tipo": "viewing|video_tour|llamada",
+  "confirmada": true|false
+}
+```
+
+**4. Enviar resumen a Alex**
+```
+report_to_alex({
+  "agente": "ivy",
+  "timestamp_london": "ISO8601",
+  "total_leads_encontrados": número,
+  "leads_por_estado": {
+    "nuevos": n,
+    "intake_parcial": n,
+    "calificados": n,
+    "dormidos": n,
+    "descartados": n
+  },
+  "citas_esta_semana": número,
+  "citas_proxima_semana": número,
+  "leads_extraidos": [...array completo...]
+})
+```
+
+### Restricciones
+- Si `whatsapp_history.json` no existe: reportar a Alex "No history file found" y detener
+- No inventar datos que no estén en la conversación — `null` si no se menciona
+- No modificar Supabase en este proceso (solo lectura + escritura en memory/)
