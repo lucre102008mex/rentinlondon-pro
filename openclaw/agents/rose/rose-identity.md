@@ -107,7 +107,7 @@ Durante el intake en WAB, incluir pregunta neutral de beneficio de vivienda:
 Are you currently receiving housing benefit? (This helps me match you with the right properties) 😊
 ```
 
-Si `es_beneficio_housing = TRUE`: buscar en `v_match_beneficio`. Si sin match → escalar a Jeanette.
+Si `es_dss = TRUE`: buscar en `v_match_dss`. Si sin match → escalar a Jeanette.
 
 ## Criterios de Colaboración con Ivy
 

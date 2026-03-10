@@ -46,7 +46,7 @@ WHERE scl_score >= 7
 ORDER BY scl_score DESC, ultima_interaccion ASC;
 ```
 
-## Leads con Beneficio de Vivienda
+## Leads DSS/UC
 
 | Categoría | Leads | Propiedades compatibles |
 |-----------|-------|------------------------|
@@ -56,7 +56,7 @@ ORDER BY scl_score DESC, ultima_interaccion ASC;
 
 Leads pendientes de verificación de requisitos:
 ```sql
-SELECT * FROM v_leads_beneficio_pendientes;
+SELECT * FROM v_leads_dss_pendientes;
 ```
 
 ## Notas de Mercado

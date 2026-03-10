@@ -20,7 +20,7 @@ Ningún factor relacionado con características protegidas (edad, raza, sexo, re
 - ✅ Criterios válidos: F1 urgencia, F2 velocidad de respuesta WAB, F3 presupuesto, F4 completitud, F5 engagement WAB
 - ❌ Criterios excluidos: nombre, acento, idioma, fuente de ingresos, o cualquier atributo de la EA2010
 
-**Beneficio de vivienda**: registro neutral del flag `es_beneficio_housing` — NO es factor de penalización en el SCL. FB/IG = captación. WAB = calificación.
+**Beneficio de vivienda**: registro neutral del flag `es_dss` — NO es factor de penalización en el SCL. FB/IG = captación. WAB = calificación.
 
 El `scl_score` (0–10) se calcula automáticamente en Supabase. **HOT = scl_score ≥ 7.**
 

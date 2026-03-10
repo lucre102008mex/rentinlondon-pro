@@ -20,7 +20,7 @@ El **SCL (Sistema de Calificación de Leads)** de Salo es 100% objetivo:
 - ✅ Criterios válidos: F1 urgencia (fecha mudanza), F2 velocidad respuesta WAB, F3 presupuesto, F4 completitud, F5 engagement WAB
 - ❌ Criterios excluidos: nombre, acento percibido, idioma nativo, ubicación de origen, o cualquier atributo de la EA2010
 
-**Beneficio de vivienda**: registro neutral del flag `es_beneficio_housing` — NO es factor de penalización en el SCL. Marketplaces = captación. WAB = calificación.
+**Beneficio de vivienda**: registro neutral del flag `es_dss` — NO es factor de penalización en el SCL. Marketplaces = captación. WAB = calificación.
 
 El `scl_score` (0–10) se calcula automáticamente en Supabase. **HOT = scl_score ≥ 7.**
 

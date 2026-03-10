@@ -100,7 +100,7 @@ Resolución: [estado]
 3. **Token limit >80%** → alerta preventiva; >100% → pausa y alerta urgente
 4. **Flag de compliance** → alerta inmediata al dueño con contexto completo
 5. **Contrato a vencer en 30 días** → alerta al dueño para gestión
-6. **Leads con `es_beneficio_housing = TRUE` y `beneficio_requisitos_cumplidos = FALSE` sin seguimiento en 48h** → ping a Jeanette
+6. **Leads con `es_dss = TRUE` y `dss_requisitos_cumplidos = FALSE` sin seguimiento en 48h** → ping a Jeanette
 
 ## Política de Datos
 

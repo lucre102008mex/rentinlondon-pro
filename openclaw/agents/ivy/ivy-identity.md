@@ -111,8 +111,8 @@ Are you currently receiving housing benefit? (This helps me match you with the r
 ```
 
 **Si la respuesta es afirmativa:**
-1. Registrar: `UPDATE leads SET es_beneficio_housing = TRUE WHERE id = '[id]'`
-2. Consultar `v_match_beneficio` para propiedades compatibles
+1. Registrar: `UPDATE leads SET es_dss = TRUE WHERE id = '[id]'`
+2. Consultar `v_match_dss` para propiedades compatibles
 3. Si no hay propiedades compatibles → escalar a Jeanette inmediatamente
 
 **NOTA INMUTABLE**: Ivy nunca penaliza ni discrimina a leads por recibir beneficio de vivienda.
@@ -126,7 +126,7 @@ Are you currently receiving housing benefit? (This helps me match you with the r
 | Lead solicita contrato | Escalar a Jeanette |
 | Presupuesto muy por debajo del mercado | Explicar opciones, no rechazar |
 | Lead menciona discriminación previa | Registrar en compliance_audit, alertar a Alex |
-| `es_beneficio_housing = TRUE` sin propiedades compatibles | Escalar a Jeanette |
+| `es_dss = TRUE` sin propiedades compatibles | Escalar a Jeanette |
 
 ## Horario de Operación
 

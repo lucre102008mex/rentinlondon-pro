@@ -1,15 +1,15 @@
-# GUIA-LEADS-BENEFICIO.md — Guía Operativa: Leads con Beneficio de Vivienda
+# GUIA-LEADS-DSS.md — Guía Operativa: Leads DSS/UC
 ## RentInLondon PRO
 
 > **Cumplimiento**: UK Equality Act 2010.
-> Los leads con beneficio de vivienda reciben el mismo proceso de calificación SCL que cualquier otro lead.
-> El beneficio de vivienda es un **flag de matching**, no un criterio de puntuación.
+> Los leads con DSS/UC reciben el mismo proceso de calificación SCL que cualquier otro lead.
+> El DSS/UC es un **flag de matching**, no un criterio de puntuación.
 
 ---
 
-## 1. ¿Qué es el Beneficio de Vivienda?
+## 1. ¿Qué es DSS/UC?
 
-El **beneficio de vivienda** (housing benefit) es una ayuda gubernamental del Reino Unido que cubre total o parcialmente el coste del alquiler de personas con bajos ingresos o en determinadas situaciones de necesidad.
+El **DSS/UC** (housing benefit) es una ayuda gubernamental del Reino Unido que cubre total o parcialmente el coste del alquiler de personas con bajos ingresos o en determinadas situaciones de necesidad.
 
 En el contexto londinense:
 - Es gestionado a través del Local Housing Allowance (LHA), calculado por zona postal
@@ -17,7 +17,7 @@ En el contexto londinense:
 - Muchos landlords aceptan esta modalidad, especialmente en zonas con alta demanda de alquiler asequible
 - Algunos landlords añaden requisitos adicionales para mitigar su riesgo (garantor, meses adelantados, etc.)
 
-**Los leads con beneficio de vivienda son una oportunidad de negocio válida y frecuente en el mercado londinense.**
+**Los leads con DSS/UC son una oportunidad de negocio válida y frecuente en el mercado londinense.**
 
 ---
 
@@ -29,7 +29,7 @@ En el contexto londinense:
 - **Pool de landlords**: trabajar con landlords que aceptan esta modalidad amplía nuestra cartera
 - **Diferenciación**: muchas agencias los rechazan; nosotros los atendemos correctamente
 
-**La clave es hacer el matching correcto: lead con beneficio → propiedad con `acepta_beneficio_housing = TRUE`.**
+**La clave es hacer el matching correcto: lead DSS/UC → propiedad con `acepta_dss = TRUE`.**
 
 ---
 
@@ -46,7 +46,7 @@ Are you currently receiving housing benefit? (This helps me match you with the r
 
 **En español:**
 ```
-¿Recibes actualmente algún beneficio de vivienda? (Esto me ayuda a encontrarte las propiedades correctas — no afecta tu puntuación de ninguna manera) 😊
+¿Recibes actualmente algún DSS/UC? (Esto me ayuda a encontrarte las propiedades correctas — no afecta tu puntuación de ninguna manera) 😊
 ```
 
 ### Señales Durante la Conversación
@@ -60,20 +60,20 @@ El agente debe registrar el flag si el lead menciona:
 
 ### Acción Inmediata
 
-Al confirmar `es_beneficio_housing = TRUE`:
+Al confirmar `es_dss = TRUE`:
 
 ```sql
-UPDATE leads SET es_beneficio_housing = TRUE WHERE id = '[lead_id]';
+UPDATE leads SET es_dss = TRUE WHERE id = '[lead_id]';
 ```
 
-El agente busca propiedades compatibles usando `v_match_beneficio` (ver sección 6).
+El agente busca propiedades compatibles usando `v_match_dss` (ver sección 6).
 Si no hay propiedades compatibles → escalar a Jeanette.
 
 ---
 
 ## 4. Requisitos Comunes de Landlords que Aceptan Esta Modalidad
 
-Los landlords que aceptan leads con beneficio de vivienda suelen pedir uno o varios de los siguientes:
+Los landlords que aceptan leads con DSS/UC suelen pedir uno o varios de los siguientes:
 
 | Requisito | Descripción |
 |-----------|-------------|
@@ -83,11 +83,11 @@ Los landlords que aceptan leads con beneficio de vivienda suelen pedir uno o var
 | **Carta del empleador** | Si el lead cambió recientemente de situación laboral |
 | **Historial de alquiler** | Referencias de alquileres previos sin incidencias |
 
-Los requisitos específicos de cada propiedad están en el campo `beneficio_requisitos` de la tabla `properties`.
+Los requisitos específicos de cada propiedad están en el campo `dss_requisitos` de la tabla `properties`.
 
 ---
 
-## 5. Proceso de Upgrade: `beneficio_requisitos_cumplidos = TRUE`
+## 5. Proceso de Upgrade: `dss_requisitos_cumplidos = TRUE`
 
 Cuando el lead ha completado los requisitos exigidos por el landlord, se marca como verificado. Esto le da acceso al pool completo de propiedades.
 
@@ -107,8 +107,8 @@ Cuando todos los requisitos están cumplidos:
 ```sql
 UPDATE leads
 SET
-  beneficio_requisitos_cumplidos = TRUE,
-  beneficio_notas = '[Descripción de los requisitos cumplidos y fecha]'
+  dss_requisitos_cumplidos = TRUE,
+  dss_notas = '[Descripción de los requisitos cumplidos y fecha]'
 WHERE id = '[lead_id]';
 ```
 
@@ -119,38 +119,38 @@ WHERE id = '[lead_id]';
 
 ## 6. Consultas SQL para Ver Propiedades Compatibles
 
-### Leads con beneficio pendientes de verificación
+### Leads DSS/UC pendientes de verificación
 
 ```sql
-SELECT * FROM v_leads_beneficio_pendientes;
+SELECT * FROM v_leads_dss_pendientes;
 ```
 
-Esta vista muestra todos los leads con `es_beneficio_housing = TRUE` y `beneficio_requisitos_cumplidos = FALSE`, ordenados por `scl_score DESC`.
+Esta vista muestra todos los leads con `es_dss = TRUE` y `dss_requisitos_cumplidos = FALSE`, ordenados por `scl_score DESC`.
 
 ### Matching leads con propiedades compatibles
 
 ```sql
-SELECT * FROM v_match_beneficio;
+SELECT * FROM v_match_dss;
 ```
 
-Esta vista cruza leads con beneficio contra propiedades con `acepta_beneficio_housing = TRUE`, filtrando por zona, tipo de propiedad y presupuesto.
+Esta vista cruza leads DSS/UC contra propiedades con `acepta_dss = TRUE`, filtrando por zona, tipo de propiedad y presupuesto.
 
 ### Propiedades que aceptan esta modalidad de pago
 
 ```sql
-SELECT id, direccion, zona, tipo, precio_mensual, beneficio_requisitos
+SELECT id, direccion, zona, tipo, precio_mensual, dss_requisitos
 FROM properties
-WHERE acepta_beneficio_housing = TRUE
+WHERE acepta_dss = TRUE
   AND estado = 'available'
 ORDER BY zona, precio_mensual ASC;
 ```
 
-### Leads con beneficio HOT (scl_score ≥ 7)
+### Leads DSS/UC HOT (scl_score ≥ 7)
 
 ```sql
-SELECT nombre, zona_preferida, presupuesto_max, scl_score, beneficio_requisitos_cumplidos, asignado_a
+SELECT nombre, zona_preferida, presupuesto_max, scl_score, dss_requisitos_cumplidos, asignado_a
 FROM v_leads_activos
-WHERE es_beneficio_housing = TRUE
+WHERE es_dss = TRUE
   AND scl_score >= 7
 ORDER BY scl_score DESC;
 ```
@@ -159,13 +159,13 @@ ORDER BY scl_score DESC;
 
 ## 7. Registro en `compliance_audit` — UK Equality Act 2010
 
-Toda decisión relacionada con leads que reciben beneficio de vivienda debe quedar registrada para cumplimiento legal.
+Toda decisión relacionada con leads que reciben DSS/UC debe quedar registrada para cumplimiento legal.
 
 ### Cuándo Registrar
 
-- Al marcar `es_beneficio_housing = TRUE` (quién lo registró y en qué contexto)
-- Si un landlord rechaza un lead por recibir beneficio de vivienda (posible discriminación ilegal)
-- Si hay duda sobre si una propiedad está siendo ocultada a leads con beneficio sin justificación objetiva
+- Al marcar `es_dss = TRUE` (quién lo registró y en qué contexto)
+- Si un landlord rechaza un lead por recibir DSS/UC (posible discriminación ilegal)
+- Si hay duda sobre si una propiedad está siendo ocultada a leads DSS/UC sin justificación objetiva
 
 ### Cómo Registrar
 
@@ -175,7 +175,7 @@ INSERT INTO compliance_audit (
 ) VALUES (
   '[lead_id]',
   '[nombre_agente]',
-  'beneficio_housing_flag',
+  'dss_uc_flag',
   '[descripción de la situación]',
   NOW()
 );
@@ -183,9 +183,9 @@ INSERT INTO compliance_audit (
 
 ### Discriminación por Fuente de Ingresos
 
-En el Reino Unido, rechazar a un inquilino **únicamente** por recibir beneficio de vivienda puede constituir discriminación indirecta bajo la **UK Equality Act 2010** si afecta desproporcionadamente a grupos protegidos (discapacidad, género, edad).
+En el Reino Unido, rechazar a un inquilino **únicamente** por recibir DSS/UC puede constituir discriminación indirecta bajo la **UK Equality Act 2010** si afecta desproporcionadamente a grupos protegidos (discapacidad, género, edad).
 
-**Si un landlord rechaza a un lead exclusivamente por recibir beneficio de vivienda:**
+**Si un landlord rechaza a un lead exclusivamente por recibir DSS/UC:**
 1. Registrar inmediatamente en `compliance_audit`
 2. Notificar a Alex para revisión
 3. Alex alerta al dueño con evidencia y contexto legal
@@ -195,12 +195,12 @@ En el Reino Unido, rechazar a un inquilino **únicamente** por recibir beneficio
 ## 8. Flujo Completo del Proceso
 
 ```
-[Lead menciona beneficio de vivienda en WAB]
+[Lead menciona DSS/UC en WAB]
            ↓
 Agente (Ivy/Rose/Salo) registra:
-UPDATE leads SET es_beneficio_housing = TRUE
+UPDATE leads SET es_dss = TRUE
            ↓
-Buscar en v_match_beneficio
+Buscar en v_match_dss
            ↓
 ¿Hay propiedades compatibles?
    ↓ SÍ                    ↓ NO
@@ -217,7 +217,7 @@ de verificación          viewing directamente
 ¿Requisitos cumplidos?
    ↓ SÍ                    ↓ NO
 UPDATE leads SET         Continuar nurturing
-beneficio_requisitos_    + apoyo para
+dss_requisitos_    + apoyo para
 cumplidos = TRUE         cumplir requisitos
            ↓
 Pool completo de
@@ -232,14 +232,14 @@ Proceder al cierre (Jeanette)
 
 | Término | Significado |
 |---------|-------------|
-| `es_beneficio_housing` | Flag en BD que indica que el lead recibe beneficio de vivienda |
-| `acepta_beneficio_housing` | Flag en BD que indica que el landlord acepta esta modalidad |
-| `beneficio_requisitos_cumplidos` | TRUE cuando el lead ha cumplido todos los requisitos del landlord |
-| `beneficio_notas` | Notas del agente sobre la situación específica del lead |
-| `beneficio_requisitos` | Descripción de los requisitos del landlord en la propiedad |
+| `es_dss` | Flag en BD que indica que el lead recibe DSS/UC |
+| `acepta_dss` | Flag en BD que indica que el landlord acepta esta modalidad |
+| `dss_requisitos_cumplidos` | TRUE cuando el lead ha cumplido todos los requisitos del landlord |
+| `dss_notas` | Notas del agente sobre la situación específica del lead |
+| `dss_requisitos` | Descripción de los requisitos del landlord en la propiedad |
 | LHA | Local Housing Allowance — importe máximo de beneficio por zona |
-| `v_match_beneficio` | Vista de matching entre leads y propiedades compatibles |
-| `v_leads_beneficio_pendientes` | Vista de leads pendientes de verificación de requisitos |
+| `v_match_dss` | Vista de matching entre leads y propiedades compatibles |
+| `v_leads_dss_pendientes` | Vista de leads pendientes de verificación de requisitos |
 
 ---
 

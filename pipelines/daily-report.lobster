@@ -37,14 +37,17 @@ steps:
       order: "scl_score.desc,ultima_interaccion.asc"
       limit: 10
 
-  - id: query_beneficio_leads
-    name: "Obtener leads con beneficio de vivienda pendientes de verificación"
+  - id: query_dss_leads
+    name: "Obtener leads DSS/UC con match disponible"
     agent: alex
     action: supabase_query
     params:
-      view: v_leads_beneficio_pendientes
+      view: v_leads_dss_pendientes
+      filter: "tiene_match_inmediato.eq.true"
       order: "scl_score.desc"
       limit: 10
+    alert_if_results: true
+    alert_message: "🏠 ALERTA DSS: {count} lead(s) DSS/UC tienen propiedad compatible disponible — contactar INMEDIATO"
 
   - id: query_void_properties
     name: "Obtener propiedades void"
@@ -90,7 +93,7 @@ steps:
     depends_on:
       - query_daily_summary
       - query_hot_leads
-      - query_beneficio_leads
+      - query_dss_leads
       - query_void_properties
       - query_dormant_leads
       - query_token_usage
