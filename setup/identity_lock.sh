@@ -25,7 +25,7 @@ LOCKED=0
 FAILED=0
 
 # Agentes esperados
-AGENTS=("alex" "ivy" "rose" "salo" "jeanette" "ads-fb" "ads-gumtree" "script-runner")
+AGENTS=("alex" "ivy" "rose" "salo" "jeanette" "facebook" "gumtree" "script")
 
 for agent in "${AGENTS[@]}"; do
   AGENT_DIR="$AGENTS_DIR/$agent"
@@ -36,7 +36,7 @@ for agent in "${AGENTS[@]}"; do
     continue
   fi
   
-  for pattern in "*-soul.md" "*-identity.md" "SOUL.md" "IDENTITY.md"; do
+  for pattern in "SOUL.md" "IDENTITY.md" "soul.md" "identity.md" "*-soul.md" "*-identity.md"; do
     for file in "$AGENT_DIR"/$pattern; do
       if [[ -f "$file" ]]; then
         chmod 444 "$file"

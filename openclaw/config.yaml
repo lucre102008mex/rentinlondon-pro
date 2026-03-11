@@ -46,8 +46,8 @@ agents:
   - id: alex
     name: Alex
     role: coordinator
-    soul: agents/alex/soul.md
-    identity: agents/alex/identity.md
+    soul: agents/alex/SOUL.md
+    identity: agents/alex/IDENTITY.md
     channel: telegram
     active: true
     # Nota: configurar LLM_MODEL_ALEX en .env para seleccionar el modelo
@@ -84,8 +84,8 @@ agents:
   - id: ivy
     name: Ivy
     role: intake_uk
-    soul: agents/ivy/soul.md
-    identity: agents/ivy/identity.md
+    soul: agents/ivy/SOUL.md
+    identity: agents/ivy/IDENTITY.md
     channel: whatsapp
     active: true
     llm:
@@ -123,8 +123,8 @@ agents:
   - id: rose
     name: Rose
     role: ads_followup_uk
-    soul: agents/rose/soul.md
-    identity: agents/rose/identity.md
+    soul: agents/rose/SOUL.md
+    identity: agents/rose/IDENTITY.md
     channel: whatsapp
     active: true
     llm:
@@ -162,8 +162,8 @@ agents:
   - id: salo
     name: Salo
     role: marketplace_intake_uk
-    soul: agents/salo/soul.md
-    identity: agents/salo/identity.md
+    soul: agents/salo/SOUL.md
+    identity: agents/salo/IDENTITY.md
     channel: whatsapp
     active: true
     llm:
@@ -202,8 +202,8 @@ agents:
   - id: jeanette
     name: Jeanette
     role: closing_uk_intl
-    soul: agents/jeanette/soul.md
-    identity: agents/jeanette/identity.md
+    soul: agents/jeanette/SOUL.md
+    identity: agents/jeanette/IDENTITY.md
     channel: whatsapp
     active: true
     llm:
@@ -254,8 +254,8 @@ agents:
   - id: facebook
     name: Facebook-Ads
     role: facebook_ads_campaign_manager
-    soul: agents/facebook/soul.md
-    identity: agents/facebook/identity.md
+    soul: agents/facebook/SOUL.md
+    identity: agents/facebook/IDENTITY.md
     channel: internal
     active: true
     llm:
@@ -287,8 +287,8 @@ agents:
   - id: gumtree
     name: Gumtree-Ads
     role: marketplace_listings_manager
-    soul: agents/gumtree/soul.md
-    identity: agents/gumtree/identity.md
+    soul: agents/gumtree/SOUL.md
+    identity: agents/gumtree/IDENTITY.md
     channel: internal
     active: true
     llm:
@@ -321,8 +321,8 @@ agents:
   - id: script
     name: Script-Runner
     role: internal_automation
-    soul: agents/script/soul.md
-    identity: agents/script/identity.md
+    soul: agents/script/SOUL.md
+    identity: agents/script/IDENTITY.md
     channel: internal
     active: true
     llm:
