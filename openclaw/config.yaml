@@ -46,8 +46,8 @@ agents:
   - id: alex
     name: Alex
     role: coordinator
-    soul: /home/ubuntu/.openclaw/workspace/agents/alex/SOUL.md
-    identity: /home/ubuntu/.openclaw/workspace/agents/alex/IDENTITY.md
+    soul: agents/alex/SOUL.md
+    identity: agents/alex/IDENTITY.md
     channel: telegram
     active: true
     # Nota: configurar LLM_MODEL_ALEX en .env para seleccionar el modelo
@@ -84,8 +84,8 @@ agents:
   - id: ivy
     name: Ivy
     role: intake_uk
-    soul: /home/ubuntu/.openclaw/workspace/agents/ivy/SOUL.md
-    identity: /home/ubuntu/.openclaw/workspace/agents/ivy/IDENTITY.md
+    soul: agents/ivy/SOUL.md
+    identity: agents/ivy/IDENTITY.md
     channel: whatsapp
     active: true
     llm:
@@ -123,8 +123,8 @@ agents:
   - id: rose
     name: Rose
     role: ads_followup_uk
-    soul: /home/ubuntu/.openclaw/workspace/agents/rose/SOUL.md
-    identity: /home/ubuntu/.openclaw/workspace/agents/rose/IDENTITY.md
+    soul: agents/rose/SOUL.md
+    identity: agents/rose/IDENTITY.md
     channel: whatsapp
     active: true
     llm:
@@ -162,8 +162,8 @@ agents:
   - id: salo
     name: Salo
     role: marketplace_intake_uk
-    soul: /home/ubuntu/.openclaw/workspace/agents/salo/SOUL.md
-    identity: /home/ubuntu/.openclaw/workspace/agents/salo/IDENTITY.md
+    soul: agents/salo/SOUL.md
+    identity: agents/salo/IDENTITY.md
     channel: whatsapp
     active: true
     llm:
@@ -202,8 +202,8 @@ agents:
   - id: jeanette
     name: Jeanette
     role: closing_uk_intl
-    soul: /home/ubuntu/.openclaw/workspace/agents/jeanette/SOUL.md
-    identity: /home/ubuntu/.openclaw/workspace/agents/jeanette/IDENTITY.md
+    soul: agents/jeanette/SOUL.md
+    identity: agents/jeanette/IDENTITY.md
     channel: whatsapp
     active: true
     llm:
@@ -247,37 +247,38 @@ agents:
 # SUB-AGENTES (bajo consumo de tokens)
 # =============================================================================
 
-  # ─── FACEBOOK: Community Manager & Growth Specialist ─────────────────────────
-  # NOTA: facebook NO responde a clientes. Genera y publica contenido orgánico
-  # (fotos y copies persuasivos) para derivar tráfico al CTWA de las agentes.
+  # ─── ADS-FB: Gestión de Campañas Facebook/Instagram ──────────────────────────
+  # NOTA: ads-fb NO captura leads. Los leads llegan directamente a las agentes
+  # (Rose/Ivy) vía Click-to-WhatsApp (CTWA) en los anuncios.
+  # ads-fb gestiona campañas, mide rendimiento y reporta métricas.
   - id: facebook
-    name: Facebook-Community
-    role: facebook_community_manager
-    soul: /home/ubuntu/.openclaw/workspace/agents/facebook/SOUL.md
-    identity: /home/ubuntu/.openclaw/workspace/agents/facebook/IDENTITY.md
+    name: Facebook-Ads
+    role: facebook_ads_campaign_manager
+    soul: agents/facebook/SOUL.md
+    identity: agents/facebook/IDENTITY.md
     channel: internal
     active: true
     llm:
-      model: ${LLM_MODEL_FACEBOOK:-google/gemini-2.0-flash}
+      model: ${LLM_MODEL_ADSFB:-google/gemini-2.5-flash-lite}
       api_key: ${GEMINI_API_KEY_SUBAGENTS}
       fallback_api_key: ${GEMINI_FALLBACK_API_KEY_SUBAGENTS}
-      temperature: 0.5
-      max_tokens: 2048
+      temperature: 0.2
+      max_tokens: 1024
     tools:
-      - fbpost
-      - supabasefbpost
+      - facebook_ads_api_read
+      - supabase_read_views
       - supabase_write_logs
+      - generate_ads_report
     schedule:
-      morning_post: "0 10 * * 1-5 Europe/London"
-      evening_post: "0 18 * * 1-5 Europe/London"
+      ads_report: "0 18 * * * Europe/London"
     rate_limits:
-      tokens_per_day: 50000
-      requests_per_hour: 50
-    db_role: facebook_cm_role
+      tokens_per_day: 10000
+      requests_per_hour: 100
+    db_role: ads_fb_role
     restrictions:
       - no_contract_access
       - no_lead_capture
-      - content_creation_and_posting_only
+      - campaign_reporting_only
 
   # ─── ADS-GUMTREE: Gestión de Listings en Marketplaces ────────────────────────
   # NOTA: ads-gumtree NO captura leads. Los leads llegan directamente a Salo
@@ -286,8 +287,8 @@ agents:
   - id: gumtree
     name: Gumtree-Ads
     role: marketplace_listings_manager
-    soul: /home/ubuntu/.openclaw/workspace/agents/gumtree/SOUL.md
-    identity: /home/ubuntu/.openclaw/workspace/agents/gumtree/IDENTITY.md
+    soul: agents/gumtree/SOUL.md
+    identity: agents/gumtree/IDENTITY.md
     channel: internal
     active: true
     llm:
@@ -320,8 +321,8 @@ agents:
   - id: script
     name: Script-Runner
     role: internal_automation
-    soul: /home/ubuntu/.openclaw/workspace/agents/script/SOUL.md
-    identity: /home/ubuntu/.openclaw/workspace/agents/script/IDENTITY.md
+    soul: agents/script/SOUL.md
+    identity: agents/script/IDENTITY.md
     channel: internal
     active: true
     llm:
@@ -355,7 +356,6 @@ agents:
 # =============================================================================
 # CONFIGURACIÓN GLOBAL
 # =============================================================================
-
 global:
   compliance:
     framework: UK_Equality_Act_2010
