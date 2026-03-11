@@ -37,6 +37,7 @@ for agent in "${AGENTS[@]}"; do
   fi
   
   for pattern in "SOUL.md" "IDENTITY.md" "soul.md" "identity.md" "*-soul.md" "*-identity.md"; do
+    # Prioriza SOUL.md/IDENTITY.md (convención estándar); soul.md/identity.md como fallback
     for file in "$AGENT_DIR"/$pattern; do
       if [[ -f "$file" ]]; then
         chmod 444 "$file"
