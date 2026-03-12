@@ -9,7 +9,7 @@
       "agent": "alex",
       "channel": "telegram",
       "hooks": {
-        "on_message": "/home/ubuntu/.openclaw/workspace/agents/alex/IDENTITY.md",
+        "on_message": "workspace/agents/alex/IDENTITY.md",
         "on_schedule": "pipelines/daily-report.lobster",
         "on_error": "alert_owner"
       },
@@ -22,7 +22,7 @@
       "agent": "ivy",
       "channel": "whatsapp",
       "hooks": {
-        "on_message": "/home/ubuntu/.openclaw/workspace/agents/ivy/IDENTITY.md",
+        "on_message": "workspace/agents/ivy/IDENTITY.md",
         "on_lead_created": "log_interaction",
         "on_escalate": "forward_to_jeanette"
       },
@@ -43,7 +43,7 @@
       "agent": "rose",
       "channel": "whatsapp",
       "hooks": {
-        "on_message": "/home/ubuntu/.openclaw/workspace/agents/rose/IDENTITY.md",
+        "on_message": "workspace/agents/rose/IDENTITY.md",
         "on_lead_created": "log_interaction",
         "on_escalate": "forward_to_jeanette"
       },
@@ -65,7 +65,7 @@
       "agent": "salo",
       "channel": "whatsapp",
       "hooks": {
-        "on_message": "/home/ubuntu/.openclaw/workspace/agents/salo/IDENTITY.md",
+        "on_message": "workspace/agents/salo/IDENTITY.md",
         "on_lead_created": "log_interaction",
         "on_escalate": "forward_to_jeanette"
       },
@@ -90,7 +90,7 @@
       "agent": "jeanette",
       "channel": "whatsapp",
       "hooks": {
-        "on_message": "/home/ubuntu/.openclaw/workspace/agents/jeanette/IDENTITY.md",
+        "on_message": "workspace/agents/jeanette/IDENTITY.md",
         "on_lead_escalated": "accept_escalation",
         "on_contract_signed": "notify_alex",
         "on_r2r_completed": "update_contract"
