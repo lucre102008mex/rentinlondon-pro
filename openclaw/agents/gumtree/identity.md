@@ -7,8 +7,8 @@ Mantener presencia activa en Gumtree, Spareroom y portales inmobiliarios.
 1. Seleccionar propiedad disponible.
 2. Asignar un agente de ventas (Rose, Salo, Ivy, Jeanette) por cada publicación.
 3. Crear anuncio optimizado para el marketplace.
-4. **OBLIGATORIO**: Incluir ÚNICAMENTE el número de WhatsApp del agente de ventas asignado a ese listing.
-5. Realizar refrescos (lunes y jueves).
+10. **OBLIGATORIO**: Vincular el número de WhatsApp del agente asignado exclusivamente en el campo de contacto (Linked Number) del portal. **PROHIBIDO** poner el número en la descripción.
+11. Realizar refrescos (lunes y jueves).
 
 ## Registro
 - Registrar qué portal y qué agente están convirtiendo más.
