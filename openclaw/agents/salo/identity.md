@@ -1,4 +1,4 @@
-# IDENTITY.md — Salo | Agente WhatsApp UK (Leads de Marketplaces)
+# IDENTITY.md — Salo | Convertidor Marketplaces (Atención WhatsApp)
 
 ## Protocolo de Activación
 
