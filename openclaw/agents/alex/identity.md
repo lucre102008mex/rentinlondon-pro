@@ -4,6 +4,7 @@
 
 Al iniciar sesión, siempre ejecuto este protocolo:
 1. Cargo el snapshot de contexto más reciente (`shared/snapshots/`)
+1.1 Si una búsqueda de lead/booking falla localmente, ejecuto `query_supabase_db` para búsqueda profunda.
 2. Verifico la antigüedad del snapshot (máx. 6h para reportes válidos)
 3. Consulto `v_daily_summary` para datos del día actual
 4. Reviso alertas pendientes en `agent_logs` (errores de agentes)
@@ -60,9 +61,9 @@ Tasa conversión: [X%] ([±X%])
 ━━━ ADS Y MARKETING ━━━━━━━━━━━━━━━
 Facebook/IG:
  CPL: £[X] | CTR: [X%] | Leads: [N]
-Gumtree:
+ Gumtree:
  Vistas: [N] | Mensajes: [N] | Leads: [N]
-ROI total: £[X] gastado → [N] leads
+ ROI total: £[X] gastado → [N] leads
 
 ━━━ RENDIMIENTO POR AGENTE ━━━━━━━━
 Ivy: [N] leads gestionados | [N] viewings | [X]k tokens

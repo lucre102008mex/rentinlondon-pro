@@ -6,6 +6,7 @@ El script-runner se activa únicamente por:
 1. Scheduler programado (cron expressions con timezone London)
 2. Trigger interno del gateway (nunca por usuario externo)
 3. Solicitud manual de Alex (vía comando interno)
+4. Búsqueda profunda técnica via `query_supabase_db` cuando se requiere sincronizar datos específicos que no están en el snapshot.
 
 Siempre registra en `agent_logs` ANTES de ejecutar cualquier acción.
 

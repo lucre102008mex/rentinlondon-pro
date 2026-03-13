@@ -1,0 +1,18 @@
+{
+  "name": "query_supabase_db",
+  "description": "Permite realizar consultas directas a cualquier tabla de la base de datos Supabase",
+  "type": "http",
+  "config": {
+    "url": "${SUPABASE_URL}/rest/v1/{{table}}",
+    "method": "GET",
+    "headers": {
+      "apikey": "${SUPABASE_SERVICE_ROLE_KEY}",
+      "Authorization": "Bearer ${SUPABASE_SERVICE_ROLE_KEY}",
+      "Content-Type": "application/json"
+    },
+    "params": {
+      "select": "{{select|default('*')}}",
+      "limit": "{{limit|default(100)}}"
+    }
+  }
+}
