@@ -104,10 +104,11 @@ BEGIN
     -- Solo registrar si el score cambió
     IF OLD.scl_score IS DISTINCT FROM NEW.scl_score THEN
         INSERT INTO public.lead_score_history
-            (lead_id, scl_score_anterior, scl_score_nuevo, cambio_score, detalle_cambio)
+            (lead_id, scl_score_anterior, scl_score_nuevo, cambio_score, factor_cambio, detalle_cambio)
         VALUES
             (NEW.id, OLD.scl_score, NEW.scl_score, 
              COALESCE(NEW.scl_score, 0) - COALESCE(OLD.scl_score, 0),
+             'auto',
              jsonb_build_object(
                  'urgency_score', NEW.urgency_score,
                  'data_completeness', NEW.data_completeness,
