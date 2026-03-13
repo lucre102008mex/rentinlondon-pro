@@ -58,16 +58,13 @@ agents:
       temperature: 0.2
       max_tokens: 4096
     tools:
-      - supabase_rw       # Superpoder: Acceso total a la BD (sin DELETE)
-      - supabase_read_all
-      - supabase_write_logs
-      - supabase_write_summaries
+      - supabase_rw
       - telegram_send
       - generate_report
       - read_snapshot
       - compliance_audit_read
-      - read_workspace_memory    # Lee shared/memory.md — memoria central
-      - write_workspace_memory   # Escribe en shared/memory.md — solo Alex
+      - read_workspace_memory
+      - write_workspace_memory
     heartbeat:
       interval: 60m
     schedule:
@@ -98,9 +95,7 @@ agents:
     tools:
       - whatsapp_send
       - whatsapp_receive
-      - supabase_leads_uk_rw
-      - supabase_interactions_rw
-      - supabase_write_logs
+      - supabase_rw
       - schedule_viewing
       - escalate_to_jeanette
       - read_whatsapp_history   # Lee agents/ivy/memory/whatsapp_history.json
@@ -137,9 +132,7 @@ agents:
     tools:
       - whatsapp_send
       - whatsapp_receive
-      - supabase_leads_ads_uk_rw
-      - supabase_interactions_rw
-      - supabase_write_logs
+      - supabase_rw
       - schedule_viewing
       - escalate_to_jeanette
       - read_whatsapp_history   # Lee agents/rose/memory/whatsapp_history.json
@@ -176,9 +169,7 @@ agents:
     tools:
       - whatsapp_send
       - whatsapp_receive
-      - supabase_leads_marketplace_uk_rw
-      - supabase_interactions_rw
-      - supabase_write_logs
+      - supabase_rw
       - quick_qualify
       - escalate_to_jeanette
       - read_whatsapp_history   # Lee agents/salo/memory/whatsapp_history.json
@@ -216,10 +207,7 @@ agents:
     tools:
       - whatsapp_send
       - whatsapp_receive
-      - supabase_leads_intl_rw
-      - supabase_contracts_rw
-      - supabase_interactions_rw
-      - supabase_write_logs
+      - supabase_rw
       - schedule_video_tour
       - send_contract
       - request_r2r_documents
@@ -267,8 +255,7 @@ agents:
       max_tokens: 1024
     tools:
       - facebook_ads_api_read
-      - supabase_read_views
-      - supabase_write_logs
+      - supabase_rw
       - generate_ads_report
     schedule:
       ads_report: "0 18 * * * Europe/London"
@@ -302,9 +289,7 @@ agents:
       - gumtree_api
       - rightmove_api_read
       - zoopla_api_read
-      - supabase_listings_history_rw
-      - supabase_read_views
-      - supabase_write_logs
+      - supabase_rw
       - refresh_listing
     schedule:
       listings_refresh: "0 11 * * 1,4 Europe/London"
@@ -333,10 +318,7 @@ agents:
       temperature: 0.1
       max_tokens: 2048
     tools:
-      - supabase_rw       # Superpoder: Acceso total a la BD (sin DELETE)
-      - supabase_read_views
-      - supabase_leads_update_status
-      - supabase_write_logs
+      - supabase_rw
       - normalize_data
       - prepare_reactivation_messages
       - validate_data_completeness
