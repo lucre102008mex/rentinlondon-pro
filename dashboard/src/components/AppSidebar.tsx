@@ -1,6 +1,6 @@
-import {
+import { 
   LayoutDashboard, KanbanSquare, Newspaper, Calendar, Brain,
-  Bot, Users, Settings, Shield, Activity, Building2, RefreshCw, Key
+  Bot, Users, Settings, Shield, Activity, Building2, RefreshCw, Key, Bell
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -15,6 +15,7 @@ const navItems = [
   { title: "Void Properties", url: "/void-properties", icon: Building2 },
   { title: "Reactivations", url: "/reactivations", icon: RefreshCw },
   { title: "Tasks", url: "/tasks", icon: KanbanSquare },
+  { title: "Operaciones", url: "/agent-operations", icon: Bell },
   { title: "Content", url: "/content", icon: Newspaper },
   { title: "Calendar", url: "/calendar", icon: Calendar },
   { title: "Memory", url: "/memory", icon: Brain },

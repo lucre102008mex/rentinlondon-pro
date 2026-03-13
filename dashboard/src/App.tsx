@@ -19,6 +19,7 @@ import NotFound from "./pages/NotFound";
 import VoidPropertiesPage from "./pages/VoidPropertiesPage";
 import ReactivationsPage from "./pages/ReactivationsPage";
 import TokenManagementPage from "./pages/TokenManagementPage";
+import AgentOperationsPage from "./pages/AgentOperationsPage";
 
 const queryClient = new QueryClient();
 
@@ -41,8 +42,9 @@ const App = () => (
             <Route path="/contacts" element={<ContactsPage />} />
             <Route path="/void-properties" element={<VoidPropertiesPage />} />
             <Route path="/reactivations" element={<ReactivationsPage />} />
-            <Route path="/tokens" element={<TokenManagementPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
+<Route path="/tokens" element={<TokenManagementPage />} />
+        <Route path="/agent-operations" element={<AgentOperationsPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>

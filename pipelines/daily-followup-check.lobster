@@ -1,9 +1,9 @@
-# Pipeline: Daily Follow-up Check
+# Pipeline: Daily Follow-up Check (WhatsApp Alerts)
 # Ejecuta cada día a las 9:00 AM Europe/London
-# Revisa followups, tasks y nurturing pasos para el día
+# Envía alertas a las agentes por WhatsApp
 
 name: daily-followup-check
-description: "Revisa followups, tasks y nurturing - alerta a agentes"
+description: "Revisa followups y tasks - alerta a agentes por WhatsApp"
 timezone: Europe/London
 schedule: "0 9 * * 1-6"  # Lun-Sáb 9AM London
 
@@ -26,105 +26,174 @@ steps:
       view: v_tasks_hoy
       limit: 50
 
-  # ─── 3. Pasos de nurturing para hoy ─────────────────────────────────────
-  - id: check_nurturing_hoy
-    name: "Verificar secuencias de nurturing para hoy"
-    agent: alex
-    action: supabase_query
-    params:
-      table: lead_nurturing_sequences
-      select: "id,lead_id,tipo_secuencia,paso_actual,total_pasos,proximo_paso_fecha"
-      filter: "estado.eq.activa"
-      order: "proximo_paso_fecha.asc"
-      limit: 20
-    on_results: process_nurturing
-
-  # ─── 4. Enviar alertas a agentes con followups ──────────────────────────
-  - id: alert_ivy_followups
-    name: "Alertar a Ivy sobre followups de hoy"
-    agent: alex
-    action: conditional
-    condition: "check_followups_hoy.results.filter(f => f.agente_asignado === 'ivy').length > 0"
-    on_true:
-      - action: telegram_send
-        params:
-          message: "🔔 FOLLOWUPS HOY - IVY\n\n{{check_followups_hoy.results.filter(f => f.agente_asignado === 'ivy').map(f => `• ${f.nombre} - ${f.zona_preferida} - SCL: ${f.scl_score} - Mudanza: ${f.fecha_mudanza}`).join('\n')}}"
-          chat_id: "${TELEGRAM_CHAT_ID}"
-
-  - id: alert_rose_followups
-    name: "Alertar a Rose sobre followups de hoy"
-    agent: alex
-    action: conditional
-    condition: "check_followups_hoy.results.filter(f => f.agente_asignado === 'rose').length > 0"
-    on_true:
-      - action: telegram_send
-        params:
-          message: "🔔 FOLLOWUPS HOY - ROSE\n\n{{check_followups_hoy.results.filter(f => f.agente_asignado === 'rose').map(f => `• ${f.nombre} - ${f.zona_preferida} - SCL: ${f.scl_score}`).join('\n')}}"
-          chat_id: "${TELEGRAM_CHAT_ID}"
-
-  - id: alert_salo_followups
-    name: "Alertar a Salo sobre followups de hoy"
-    agent: alex
-    action: conditional
-    condition: "check_followups_hoy.results.filter(f => f.agente_asignado === 'salo').length > 0"
-    on_true:
-      - action: telegram_send
-        params:
-          message: "🔔 FOLLOWUPS HOY - SALO\n\n{{check_followups_hoy.results.filter(f => f.agente_asignado === 'salo').map(f => `• ${f.nombre} - ${f.zona_preferida} - SCL: ${f.scl_score}`).join('\n')}}"
-          chat_id: "${TELEGRAM_CHAT_ID}"
-
-  - id: alert_jeanette_followups
-    name: "Alertar a Jeanette sobre followups de hoy"
-    agent: alex
-    action: conditional
-    condition: "check_followups_hoy.results.filter(f => f.agente_asignado === 'jeanette').length > 0"
-    on_true:
-      - action: telegram_send
-        params:
-          message: "🔔 FOLLOWUPS HOY - JEANETTE\n\n{{check_followups_hoy.results.filter(f => f.agente_asignado === 'jeanette').map(f => `• ${f.nombre} - ${f.zona_preferida} - SCL: ${f.scl_score}`).join('\n')}}"
-          chat_id: "${TELEGRAM_CHAT_ID}"
-
-  # ─── 5. Generar resumen diario de operaciones ───────────────────────────
-  - id: generate_ops_summary
-    name: "Generar resumen de operaciones del día"
-    agent: alex
-    action: generate_markdown
-    template: |
-      ## 📊 RESUMEN DE OPERACIONES - {{date}}
-
-      ### Followups Pendientes
-      | Agente | Cantidad |
-      |--------|----------|
-      | Ivy | {{check_followups_hoy.results.filter(f => f.agente_asignado === 'ivy').length}} |
-      | Rose | {{check_followups_hoy.results.filter(f => f.agente_asignado === 'rose').length}} |
-      | Salo | {{check_followups_hoy.results.filter(f => f.agente_asignado === 'salo').length}} |
-      | Jeanette | {{check_followups_hoy.results.filter(f => f.agente_asignado === 'jeanette').length}} |
-
-      ### Tasks Pendientes
-      | Agente | Cantidad |
-      |--------|----------|
-      | Ivy | {{check_tasks_hoy.results.filter(t => t.agente_asignado === 'ivy').length}} |
-      | Rose | {{check_tasks_hoy.results.filter(t => t.agente_asignado === 'rose').length}} |
-      | Salo | {{check_tasks_hoy.results.filter(t => t.agente_asignado === 'salo').length}} |
-      | Jeanette | {{check_tasks_hoy.results.filter(t => t.agente_asignado === 'jeanette').length}} |
-
-      ### Nurturing Activo
-      - Secuencias activas: {{check_nurturing_hoy.results.length}}
-      - Para hoy: {{check_nurturing_hoy.results.filter(n => n.proximo_paso_fecha === today).length}}
-
-  # ─── 6. Enviar resumen al dueño ─────────────────────────────────────────
-  - id: send_summary_to_owner
-    name: "Enviar resumen al dueño"
+  # ─── 3. Resumen para el Owner (Telegram) ───────────────────────────────
+  - id: send_owner_summary
+    name: "Enviar resumen al owner por Telegram"
     agent: alex
     action: telegram_send
-    depends_on:
-      - generate_ops_summary
     params:
-      message: "{{generate_ops_summary.output}}"
+      message: |
+        📊 *RESUMEN OPERACIONES - {{date}}*
+
+        *Followups Hoy:*
+        • Ivy: {{check_followups_hoy.results.filter(f => f.agente_asignado === 'ivy').length}}
+        • Rose: {{check_followups_hoy.results.filter(f => f.agente_asignado === 'rose').length}}
+        • Salo: {{check_followups_hoy.results.filter(f => f.agente_asignado === 'salo').length}}
+        • Jeanette: {{check_followups_hoy.results.filter(f => f.agente_asignado === 'jeanette').length}}
+
+        *Tasks Hoy:*
+        • Ivy: {{check_tasks_hoy.results.filter(t => t.agente_asignado === 'ivy').length}}
+        • Rose: {{check_tasks_hoy.results.filter(t => t.agente_asignado === 'rose').length}}
+        • Salo: {{check_tasks_hoy.results.filter(t => t.agente_asignado === 'salo').length}}
+        • Jeanette: {{check_tasks_hoy.results.filter(t => t.agente_asignado === 'jeanette').length}}
+
+        _Las agentes reciben sus alertas por WhatsApp._
       chat_id: "${TELEGRAM_CHAT_ID}"
       parse_mode: "Markdown"
 
-  # ─── 7. Log de ejecución ─────────────────────────────────────────────────
+  # ─── 4. Enviar alertas por WhatsApp a cada agente ───────────────────────
+  - id: alert_ivy_whatsapp
+    name: "Alertar a Ivy por WhatsApp"
+    agent: alex
+    action: script
+    command: python3
+    params:
+      script: |
+        import sys
+        sys.path.append('/home/ubuntu/rentinlondon-pro/openclaw/services')
+        from whatsapp_alert_service import send_alerts_to_agents, get_supabase_client
+        supabase = get_supabase_client()
+        
+        followups = {{check_followups_hoy.results}}
+        tasks = {{check_tasks_hoy.results}}
+        
+        # Filtrar para Ivy
+        ivy_followups = [f for f in followups if f.get('agente_asignado') == 'ivy']
+        ivy_tasks = [t for t in tasks if t.get('agente_asignado') == 'ivy']
+        
+        messages = []
+        if ivy_followups:
+            messages.append(f"🔔 *SEGUIMIENTO HOY*")
+            for f in ivy_followups:
+                messages.append(f"• {f.get('nombre')} - {f.get('zona_preferida')} - SCL: {f.get('scl_score')}")
+        if ivy_tasks:
+            messages.append(f"📋 *TAREAS HOY*")
+            for t in ivy_tasks:
+                messages.append(f"• {t.get('titulo')} - {t.get('nombre')}")
+        
+        if messages:
+            print('\\n'.join(messages))
+        else:
+            print("No hay tareas pendientes para hoy")
+    on_output:
+      - action: wacli_send
+        params:
+          phone: "${IVY_WHATSAPP_NUMBER}"
+          message: "${output}"
+
+  - id: alert_rose_whatsapp
+    name: "Alertar a Rose por WhatsApp"
+    agent: alex
+    action: script
+    depends_on:
+      - check_followups_hoy
+      - check_tasks_hoy
+    command: python3
+    params:
+      script: |
+        import sys
+        sys.path.append('/home/ubuntu/rentinlondon-pro/openclaw/services')
+        
+        followups = {{check_followups_hoy.results}}
+        tasks = {{check_tasks_hoy.results}}
+        
+        rose_followups = [f for f in followups if f.get('agente_asignado') == 'rose']
+        rose_tasks = [t for t in tasks if t.get('agente_asignado') == 'rose']
+        
+        messages = []
+        if rose_followups:
+            messages.append(f"🔔 *SEGUIMIENTO HOY*")
+            for f in rose_followups:
+                messages.append(f"• {f.get('nombre')} - {f.get('zona_preferida')} - SCL: {f.get('scl_score')}")
+        if rose_tasks:
+            messages.append(f"📋 *TAREAS HOY*")
+            for t in rose_tasks:
+                messages.append(f"• {t.get('titulo')} - {t.get('nombre')}")
+        
+        if messages:
+            print('\\n'.join(messages))
+        else:
+            print("No hay tareas pendientes para hoy")
+
+  - id: alert_salo_whatsapp
+    name: "Alertar a Salo por WhatsApp"
+    agent: alex
+    action: script
+    depends_on:
+      - check_followups_hoy
+      - check_tasks_hoy
+    command: python3
+    params:
+      script: |
+        import sys
+        sys.path.append('/home/ubuntu/rentinlondon-pro/openclaw/services')
+        
+        followups = {{check_followups_hoy.results}}
+        tasks = {{check_tasks_hoy.results}}
+        
+        salo_followups = [f for f in followups if f.get('agente_asignado') == 'salo']
+        salo_tasks = [t for t in tasks if t.get('agente_asignado') == 'salo']
+        
+        messages = []
+        if salo_followups:
+            messages.append(f"🔔 *SEGUIMIENTO HOY*")
+            for f in salo_followups:
+                messages.append(f"• {f.get('nombre')} - {f.get('zona_preferida')} - SCL: {f.get('scl_score')}")
+        if salo_tasks:
+            messages.append(f"📋 *TAREAS HOY*")
+            for t in salo_tasks:
+                messages.append(f"• {t.get('titulo')} - {t.get('nombre')}")
+        
+        if messages:
+            print('\\n'.join(messages))
+        else:
+            print("No hay tareas pendientes para hoy")
+
+  - id: alert_jeanette_whatsapp
+    name: "Alertar a Jeanette por WhatsApp"
+    agent: alex
+    action: script
+    depends_on:
+      - check_followups_hoy
+      - check_tasks_hoy
+    command: python3
+    params:
+      script: |
+        import sys
+        sys.path.append('/home/ubuntu/rentinlondon-pro/openclaw/services')
+        
+        followups = {{check_followups_hoy.results}}
+        tasks = {{check_tasks_hoy.results}}
+        
+        jeanette_followups = [f for f in followups if f.get('agente_asignado') == 'jeanette']
+        jeanette_tasks = [t for t in tasks if t.get('agente_asignado') == 'jeanette']
+        
+        messages = []
+        if jeanette_followups:
+            messages.append(f"🔔 *SEGUIMIENTO HOY*")
+            for f in jeanette_followups:
+                messages.append(f"• {f.get('nombre')} - {f.get('zona_preferida')} - SCL: {f.get('scl_score')}")
+        if jeanette_tasks:
+            messages.append(f"📋 *TAREAS HOY*")
+            for t in jeanette_tasks:
+                messages.append(f"• {t.get('titulo')} - {t.get('nombre')}")
+        
+        if messages:
+            print('\\n'.join(messages))
+        else:
+            print("No hay tareas pendientes para hoy")
+
+  # ─── 5. Log de ejecución ─────────────────────────────────────────────────
   - id: log_completion
     name: "Registrar ejecución en agent_logs"
     agent: alex
@@ -136,7 +205,6 @@ steps:
       metadata:
         followups_hoy: "${check_followups_hoy.results.length}"
         tasks_hoy: "${check_tasks_hoy.results.length}"
-        nurturing_hoy: "${check_nurturing_hoy.results.length}"
 
 # Error handling
 on_error:
