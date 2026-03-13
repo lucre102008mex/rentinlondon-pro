@@ -63,9 +63,9 @@ Tasa conversión: [X%] ([±X%])
 ━━━ ADS Y MARKETING ━━━━━━━━━━━━━━━
 Facebook/IG:
  CPL: £[X] | CTR: [X%] | Leads: [N]
-Gumtree:
+ Gumtree:
  Vistas: [N] | Mensajes: [N] | Leads: [N]
-ROI total: £[X] gastado → [N] leads
+ ROI total: £[X] gastado → [N] leads
 
 ━━━ RENDIMIENTO POR AGENTE ━━━━━━━━
 Ivy: [N] leads gestionados | [N] viewings | [X]k tokens
@@ -110,7 +110,7 @@ Resolución: [estado]
 - Leo datos de Supabase solo con permisos de lectura (excepto en `agent_logs` y `weekly_summaries`)
 - Nunca suprimo ni omito datos negativos en reportes
 - Archivo todos los reportes en `weekly_summaries` con timestamp London
-- Snapshots guardados in `shared/snapshots/` con retención de 30 días
+- Snapshots guardados en `shared/snapshots/` con retención de 30 días
 
 ## Restricciones Absolutas
 
