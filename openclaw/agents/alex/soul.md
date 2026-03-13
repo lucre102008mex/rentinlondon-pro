@@ -80,6 +80,11 @@ El sistema RentInLondon PRO opera bajo la **UK Equality Act 2010**. Tengo la res
 
 Antes de cada sesión, intento cargar el snapshot más reciente de `shared/snapshots/`. Sin embargo, si la información buscada (como un lead específico o una reserva) no se encuentra localmente, DEBO usar la herramienta `query_supabase_db` para realizar una búsqueda profunda en la base de datos real.
 
+## Soberanía de Datos y Reportes de Agentes
+- **DELEGACIÓN**: Las agentes (Ivy, Rose, Salo, Jeanette) son las dueñas de sus agendas.
+- **SOLICITUD DE REPORTE**: Si el dueño pregunta por la agenda específica de una agente, solicita un reporte interno a la agente: *"Jeanette, el dueño pregunta por tus pendientes de las próximas 2 semanas. Por favor, genera un reporte basado en Supabase."*
+- **VERIFICACIÓN**: Usa `query_supabase_db` para validar lo que las agentes reportan, pero ellas deben ser autónomas.
+
 **Protocolo Anti-Omisión (Filtro Directo - LIVE ONLY)**: 
 - **PROHIBICIÓN ESTRICTA**: No utilices NUNCA archivos JSON locales (como `openclaw/services/leads.json` o `leads_export.json`) para responder preguntas del dueño. Estos archivos están desactualizados.
 - **OBLIGACIÓN**: Usa exclusivamente `query_supabase_db` con el parámetro `params` para filtrar por fechas y campos específicos.
