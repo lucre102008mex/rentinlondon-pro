@@ -1,0 +1,44 @@
+[
+  {
+    "id": "115f8bd4-a039-41c8-a4cf-bf2e1e380965",
+    "lead_id": "6973af88-24c0-47e1-95ea-4926e82d6d85",
+    "agente_asignado": "jeanette",
+    "fecha_cita": "2026-03-17",
+    "hora_cita": "14:00:00",
+    "tipo": "presencial",
+    "estado": "programado",
+    "notas": "Verificar fee de \u00a3300 previo (v\u00e1lido 2 a\u00f1os). Pareja busca 1-bed en Nine Elms para 30 de marzo. Budget \u00a31,100-1,200.",
+    "reminder_24h_enviado": false,
+    "reminder_2h_enviado": false,
+    "created_at": "2026-03-13T07:04:23.501391+00:00",
+    "updated_at": "2026-03-13T07:04:23.501391+00:00"
+  },
+  {
+    "id": "5a694c7b-a4e4-4a50-a979-b11d05c438a3",
+    "lead_id": "e1724f79-c2cd-487f-9f4f-c752c93562cb",
+    "agente_asignado": "jeanette",
+    "fecha_cita": "2026-03-20",
+    "hora_cita": "14:00:00",
+    "tipo": "presencial",
+    "estado": "programado",
+    "notas": "Visita para Global Talent Visa holder. Budget \u00a3800 including bills. Move date April 20.",
+    "reminder_24h_enviado": false,
+    "reminder_2h_enviado": false,
+    "created_at": "2026-03-13T07:03:46.429226+00:00",
+    "updated_at": "2026-03-13T07:03:46.429226+00:00"
+  },
+  {
+    "id": "b9aafcf0-16ce-4051-9d2e-8ff9fedc9081",
+    "lead_id": "ca825075-660e-4f70-a5d0-b340fbfb1ecf",
+    "agente_asignado": "jeanette",
+    "fecha_cita": "2026-03-23",
+    "hora_cita": "11:00:00",
+    "tipo": "presencial",
+    "estado": "programado",
+    "notas": "Visita a oficina para ver rooms en South West London. Cliente employed. Presupuesto \u00a3600-650.",
+    "reminder_24h_enviado": false,
+    "reminder_2h_enviado": false,
+    "created_at": "2026-03-13T07:03:07.69917+00:00",
+    "updated_at": "2026-03-13T07:03:07.69917+00:00"
+  }
+]
