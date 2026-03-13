@@ -58,6 +58,7 @@ agents:
       temperature: 0.2
       max_tokens: 4096
     tools:
+      - query_supabase_db       # Superpoder: Acceso total a la BD
       - supabase_read_all
       - supabase_write_logs
       - supabase_write_summaries
@@ -332,6 +333,7 @@ agents:
       temperature: 0.1
       max_tokens: 2048
     tools:
+      - query_supabase_db       # Superpoder: Acceso total a la BD
       - supabase_read_views
       - supabase_leads_update_status
       - supabase_write_logs
