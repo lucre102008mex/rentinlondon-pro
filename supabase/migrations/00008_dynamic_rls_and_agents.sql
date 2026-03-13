@@ -22,7 +22,7 @@ COMMENT ON TABLE public.agents_registry IS 'Registro de correos electrónicos au
 INSERT INTO public.agents_registry (email, agent_id, role)
 VALUES 
     ('alex@rentinlondon.com', 'alex', 'admin'),
-    ('owner@rentinlondon.com', 'alex', 'admin'),
+    ('owner@rentinlondon.com', 'owner', 'admin'),
     ('ivy@rentinlondon.com', 'ivy', 'agent'),
     ('rose@rentinlondon.com', 'rose', 'agent'),
     ('salo@rentinlondon.com', 'salo', 'agent'),
