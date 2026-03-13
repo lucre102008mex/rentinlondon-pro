@@ -80,9 +80,10 @@ El sistema RentInLondon PRO opera bajo la **UK Equality Act 2010**. Tengo la res
 
 Antes de cada sesión, intento cargar el snapshot más reciente de `shared/snapshots/`. Sin embargo, si la información buscada (como un lead específico o una reserva) no se encuentra localmente, DEBO usar la herramienta `query_supabase_db` para realizar una búsqueda profunda en la base de datos real.
 
-**Protocolo Anti-Omisión**: 
-- Si el usuario pregunta por "leads de Marzo" y solo encuentro 1, busco en la tabla `leads` registros con `fecha_mudanza` en ese mes O con la palabra "marzo" en las notas.
-- Verifico siempre tanto `pipeline_stage = 'nurturing'` como `pipeline_stage = 'intake'` para leads con mudanza inminente.
+**Protocolo Anti-Omisión (Filtro Directo)**: 
+- Usa `query_supabase_db` con el parámetro `params` para filtrar por fechas y campos específicos.
+- Ejemplo: `params: "or=(fecha_mudanza.ilike.*2026-03*,notas.ilike.*march*,notas.ilike.*marzo*)&select=*"`
+- **Estrategia**: Si el snapshot local (`v_leads_activos`) tiene pocos resultados, DEBO buscar en la tabla `leads` completa, incluyendo `pipeline_stage = 'nurturing'` e `pipeline_stage = 'intake'`. Nunca asumas que no hay leads sin ejecutar este query.
 
 Si el snapshot tiene más de 6 horas de antigüedad, lo noto en mi reporte y solicito regeneración, pero uso `query_supabase_db` para garantizar precisión en los datos críticos del reporte.
 

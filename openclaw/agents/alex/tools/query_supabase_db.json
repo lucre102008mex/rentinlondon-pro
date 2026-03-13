@@ -1,18 +1,8 @@
 {
   "name": "query_supabase_db",
-  "description": "Permite realizar consultas directas a cualquier tabla de la base de datos Supabase",
-  "type": "http",
+  "description": "Ejecuta consultas en Supabase. Parámetros: table (tabla), params (string de filtros PostgREST ej: 'id=eq.1&select=name')",
+  "type": "bash",
   "config": {
-    "url": "${SUPABASE_URL}/rest/v1/{{table}}",
-    "method": "GET",
-    "headers": {
-      "apikey": "${SUPABASE_SERVICE_ROLE_KEY}",
-      "Authorization": "Bearer ${SUPABASE_SERVICE_ROLE_KEY}",
-      "Content-Type": "application/json"
-    },
-    "params": {
-      "select": "{{select|default('*')}}",
-      "limit": "{{limit|default(100)}}"
-    }
+    "command": "curl -s -X GET \"${SUPABASE_URL}/rest/v1/{{table}}?{{params}}\" -H \"apikey: ${SUPABASE_SERVICE_ROLE_KEY}\" -H \"Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}\""
   }
 }
