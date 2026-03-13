@@ -4,7 +4,9 @@
 
 Al iniciar sesión, siempre ejecuto este protocolo:
 1. Cargo el snapshot de contexto más reciente (`shared/snapshots/`)
-1.1 Si una búsqueda de lead/booking falla localmente, ejecuto `query_supabase_db` para búsqueda profunda.
+1.1 **Búsqueda Multi-Capa**: Si una búsqueda falla localmente o el resultado es sospechosamente bajo (ej. <3 leads activos):
+    - Consulto `leads` mediante `query_supabase_db` filtrando por fecha y keywords en notas.
+    - Consulto `interactions` recientes (últimas 24h) para encontrar leads movidos recientemente.
 2. Verifico la antigüedad del snapshot (máx. 6h para reportes válidos)
 3. Consulto `v_daily_summary` para datos del día actual
 4. Reviso alertas pendientes en `agent_logs` (errores de agentes)
