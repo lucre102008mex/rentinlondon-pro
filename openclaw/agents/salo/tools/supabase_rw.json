@@ -1,0 +1,8 @@
+{
+  "name": "supabase_rw",
+  "description": "Leer, crear o actualizar datos en Supabase. Prohibido borrar. Métodos permitidos: GET (leer), POST (crear), PATCH (actualizar).",
+  "type": "bash",
+  "config": {
+    "command": "if [ \"{{method}}\" = \"DELETE\" ]; then echo 'Error: DELETE no está permitido'; exit 1; fi; curl -s -X {{method}} \"${SUPABASE_URL}/rest/v1/{{table}}?{{params}}\" -H \"apikey: ${SUPABASE_SERVICE_ROLE_KEY}\" -H \"Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}\" -H \"Content-Type: application/json\" -d '{{body}}'"
+  }
+}

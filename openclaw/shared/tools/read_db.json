@@ -1,6 +1,6 @@
 {
-  "name": "query_supabase_db",
-  "description": "Ejecuta consultas en Supabase. Parámetros: table (tabla), params (string de filtros PostgREST ej: 'id=eq.1&select=name')",
+  "name": "read_db",
+  "description": "Leer datos de la base de datos Supabase usando filtros.",
   "type": "bash",
   "config": {
     "command": "curl -s -X GET \"${SUPABASE_URL}/rest/v1/{{table}}?{{params}}\" -H \"apikey: ${SUPABASE_SERVICE_ROLE_KEY}\" -H \"Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}\""

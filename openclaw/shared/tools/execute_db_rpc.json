@@ -1,0 +1,8 @@
+{
+  "name": "execute_db_rpc",
+  "description": "Ejecutar funciones de base de datos (RPC) en Supabase. Requiere: procedure (nombre de la función) y body (JSON con argumentos).",
+  "type": "bash",
+  "config": {
+    "command": "curl -s -X POST \"${SUPABASE_URL}/rest/v1/rpc/{{procedure}}\" -H \"apikey: ${SUPABASE_SERVICE_ROLE_KEY}\" -H \"Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}\" -H \"Content-Type: application/json\" -d '{{body}}'"
+  }
+}
