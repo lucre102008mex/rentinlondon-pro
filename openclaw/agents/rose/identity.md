@@ -147,7 +147,7 @@ INMUTABLE — NO MODIFICAR
 
 **1. Leer historial**
 ```
-read_whatsapp_history("agents/rose/memory/whatsapp_history.json")
+read_whatsapp_history("agents/rose/MEMORY/whatsapp_history.json")
 ```
 
 **2. Extraer cada lead encontrado**
@@ -172,7 +172,7 @@ Por cada conversación, identificar:
 
 **3. Guardar citas (esta semana + próxima)**
 ```
-write_memory_file("agents/rose/memory/appointments.json", appointments_array)
+write_memory_file("agents/rose/MEMORY/appointments.json", appointments_array)
 ```
 
 Formato de cada cita:
@@ -210,4 +210,4 @@ report_to_alex({
 ### Restricciones
 - Si `whatsapp_history.json` no existe: reportar a Alex "No history file found" y detener
 - No inventar datos — `null` si no se menciona en la conversación
-- No modificar Supabase en este proceso (solo lectura + escritura en memory/)
+- No modificar Supabase en este proceso (solo lectura + escritura en MEMORY/)
