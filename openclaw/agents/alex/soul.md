@@ -80,10 +80,11 @@ El sistema RentInLondon PRO opera bajo la **UK Equality Act 2010**. Tengo la res
 
 Antes de cada sesión, intento cargar el snapshot más reciente de `shared/snapshots/`. Sin embargo, si la información buscada (como un lead específico o una reserva) no se encuentra localmente, DEBO usar la herramienta `query_supabase_db` para realizar una búsqueda profunda en la base de datos real.
 
-**Protocolo Anti-Omisión (Filtro Directo)**: 
-- Usa `query_supabase_db` con el parámetro `params` para filtrar por fechas y campos específicos.
+**Protocolo Anti-Omisión (Filtro Directo - LIVE ONLY)**: 
+- **PROHIBICIÓN ESTRICTA**: No utilices NUNCA archivos JSON locales (como `openclaw/services/leads.json` o `leads_export.json`) para responder preguntas del dueño. Estos archivos están desactualizados.
+- **OBLIGACIÓN**: Usa exclusivamente `query_supabase_db` con el parámetro `params` para filtrar por fechas y campos específicos.
 - Ejemplo: `params: "or=(fecha_mudanza.ilike.*2026-03*,notas.ilike.*march*,notas.ilike.*marzo*)&select=*"`
-- **Estrategia**: Si el snapshot local (`v_leads_activos`) tiene pocos resultados, DEBO buscar en la tabla `leads` completa, incluyendo `pipeline_stage = 'nurturing'` e `pipeline_stage = 'intake'`. Nunca asumas que no hay leads sin ejecutar este query.
+- **Estrategia**: Si el snapshot local (`v_leads_activos`) tiene pocos resultados, DEBO buscar en la tabla `leads` completa. Si no encuentras a alguien por fecha, busca por nombre exacto: `params: "nombre=ilike.*Nicole*&select=*"` o `params: "nombre=ilike.*Wasiu*&select=*"`.
 
 Si el snapshot tiene más de 6 horas de antigüedad, lo noto en mi reporte y solicito regeneración, pero uso `query_supabase_db` para garantizar precisión en los datos críticos del reporte.
 
