@@ -104,9 +104,6 @@ agents:
       - read_workspace_memory   # Lee shared/memory.md — memoria central (solo lectura)
     heartbeat:
       interval: 60m
-    triggers:
-      - event: whatsapp.message.received
-        filter: "lead.canal_origen = 'whatsapp' AND lead.es_internacional = false"
     rate_limits:
       tokens_per_day: 30000
       requests_per_hour: 200
@@ -219,6 +216,7 @@ agents:
     heartbeat:
       interval: 60m
     triggers:
+      - event: whatsapp.message.received
       - event: lead.escalated
         filter: "escalado_jeanette = true"
       - event: lead.created
@@ -362,8 +360,35 @@ global:
     jwt_expiry: 3600
     env_file_permissions: "600"
 
-  monitoring:
-    daily_token_limit: ${DAILY_TOKEN_LIMIT:-100000}
-    daily_cost_limit_gbp: ${DAILY_COST_LIMIT_GBP:-50}
-    alert_channel: telegram
-    alert_recipient: ${TELEGRAM_CHAT_ID}
+monitoring:
+  daily_token_limit: ${DAILY_TOKEN_LIMIT:-100000}
+  daily_cost_limit_gbp: ${DAILY_COST_LIMIT_GBP:-50}
+  alert_channel: telegram
+  alert_recipient: ${TELEGRAM_CHAT_ID}
+
+# ─── BINDINGS: Enruta mensajes de WhatsApp a los agentes correctos ────────
+bindings:
+  - agentId: ivy
+    match:
+      channel: whatsapp
+      accountId: default
+      peer:
+        kind: direct
+  - agentId: rose
+    match:
+      channel: whatsapp
+      accountId: default
+      peer:
+        kind: direct
+  - agentId: salo
+    match:
+      channel: whatsapp
+      accountId: default
+      peer:
+        kind: direct
+  - agentId: jeanette
+    match:
+      channel: whatsapp
+      accountId: default
+      peer:
+        kind: direct
