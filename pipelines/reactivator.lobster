@@ -1,5 +1,4 @@
 # =============================================================================
-# Pipeline: Reactivator (Sub-agente bajo control de Alex)
 # Motor de reactivación de leads dormidos
 # Adaptado del reactivator.py v5.1 — Anti-Robot / Cooldown Extendido
 #
@@ -286,28 +285,57 @@ steps:
         - condition: "default"
           sender: "ivy"
 
-  # ─── PASO 14: Despachar al agente ─────────────────────────────────────────
-  - id: dispatch_message
-    name: "Enviar mensaje vía agente asignado (WhatsApp)"
-    action: dispatch_to_agent
+  # ─── PASO 14: Detectar dispositivo WhatsApp disponible ─────────────────────
+  - id: detect_whatsapp_device
+    name: "Detectar dispositivo WhatsApp disponible"
+    agent: script-runner
+    action: exec
     depends_on:
-      - prepare_message
       - classify_sender
     params:
-      target_agent: "${classify_sender.sender}"
-      action: whatsapp_send
-      payload:
-        phone: "${select_one_lead.lead.telefono}"
-        message: "${prepare_message.final_message}"
+      command: |
+        source ~/.nvm/nvm.sh
+        CREDENTIALS_DIR=~/.openclaw/credentials/whatsapp
+        PREFERRED_AGENT="${classify_sender.sender}"
+        FALLBACK="jeanette"
+        
+        # Check if preferred agent has credentials folder
+        if [ -d "$CREDENTIALS_DIR/$PREFERRED_AGENT" ]; then
+          DEVICE="$PREFERRED_AGENT"
+        else
+          DEVICE="$FALLBACK"
+        fi
+        
+        echo "{\"device\": \"$DEVICE\", \"preferred_agent\": \"$PREFERRED_AGENT\"}"
+      timeout: 10000
 
-  # ─── PASO 15: Registrar envío + reportar a Alex ───────────────────────────
+  # ─── PASO 15: Enviar mensaje WhatsApp ──────────────────────────────────────
+  - id: send_whatsapp_message
+    name: "Enviar mensaje WhatsApp vía dispositivo disponible"
+    agent: script-runner
+    action: exec
+    depends_on:
+      - prepare_message
+      - detect_whatsapp_device
+    params:
+      command: |
+        source ~/.nvm/nvm.sh
+        DEVICE="${detect_whatsapp_device.output_json.device}"
+        PHONE="+4472037691808"
+        MESSAGE="${prepare_message.final_message}"
+
+        # Enviar mensaje usando openclaw message send
+        openclaw message send --channel whatsapp --target "$PHONE" --message "$MESSAGE" 2>&1
+      timeout: 30000
+
+  # ─── PASO 16: Registrar envío + reportar a Alex ───────────────────────────
   - id: log_and_report
     name: "Registrar éxito y reportar a Alex"
     agent: script-runner
     action: log_action
     depends_on:
-      - dispatch_message
-    condition: "${dispatch_message.success}"
+      - send_whatsapp_message
+    condition: "${send_whatsapp_message.exit_code == 0}"
     params:
       accion: "reactivation_sent"
       exito: true
@@ -316,26 +344,27 @@ steps:
         lead_nombre: "${prepare_message.clean_name}"
         lead_telefono: "${select_one_lead.lead.telefono}"
         sender_agent: "${classify_sender.sender}"
+        device_used: "${detect_whatsapp_device.output_json.device}"
         message_template: "${prepare_message.template_used}"
         reactivation_count: "${select_one_lead.lead.reactivation_count + 1}"
         sent_today: "${count_sent_today.count + 1}"
         daily_limit: "${get_daily_limit.limit}"
 
-  # ─── PASO 16: Actualizar lead en Supabase ─────────────────────────────────
+  # ─── PASO 17: Actualizar lead en Supabase ─────────────────────────────────
   - id: update_lead
     name: "Actualizar ultima_interaccion del lead"
     agent: script-runner
     action: supabase_update
     depends_on:
       - log_and_report
-    condition: "${dispatch_message.success}"
+    condition: "${send_whatsapp_message.exit_code == 0}"
     params:
       table: leads
       filter: "id.eq.${select_one_lead.lead.id}"
       set:
         ultima_interaccion: "${now}"
 
-  # ─── PASO 17: Cooldown post-envío (22:50 - 42:33 min) ────────────────────
+  # ─── PASO 18: Cooldown post-envío (22:50 - 42:33 min) ────────────────────
   - id: post_send_cooldown
     name: "Ocultamiento bot: cooldown 22-42 min"
     agent: script-runner
@@ -347,7 +376,7 @@ steps:
       max_seconds: "${safety.cooldown_between_messages.max_seconds}"
       log_message: "🕐 Cooldown: durmiendo {sleep_minutes}m {sleep_remaining_seconds}s..."
 
-  # ─── PASO 18: Loop — siguiente lead ───────────────────────────────────────
+  # ─── PASO 19: Loop — siguiente lead ───────────────────────────────────────
   - id: loop_next_lead
     name: "Siguiente lead (volver al control de horario)"
     action: goto_step
