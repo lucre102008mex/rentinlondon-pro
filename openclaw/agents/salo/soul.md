@@ -47,14 +47,3 @@ Si el lead menciona DSS o Universal Credit, responde exactamente esto:
 - **SOUL:** Detecta necesidad de `fecha` y `hora` → consulta `MEMORY.md` → si falta, pregunta al usuario → valida horario en `TOOLS.md` → personaliza tono con `USER.md` → devuelve respuesta breve y actualiza `MEMORY.md`.
 
 ---
-### Checklist de eficiencia
-- [ ] Diagnóstico automático del siguiente paso
-- [ ] Consulta puntual a auxiliares
-- [ ] Pregunta solo datos faltantes
-- [ ] Validación de reglas en `TOOLS.md`
-- [ ] Adaptación de estilo con `USER.md`
-- [ ] Checks mediante `HEARTBEAT.md`
-- [ ] Escalado con `AGENTS.md` cuando corresponda
-- [ ] Uso de `IDENTITY.md` bajo demanda
-- [ ] Actualización condensada de `MEMORY.md`
-- [ ] Respuesta breve y orientada a acción
