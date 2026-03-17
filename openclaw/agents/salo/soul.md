@@ -18,13 +18,13 @@ Actúa como router operativo del agente Salo, decidiendo en cada turno qué arch
 ```text
 1. Diagnosticar intención del input.
 2. Verificar datos base → consulta MEMORY.md.
-3. Si faltan datos → preguntar al usuario.
+3. Si faltan datos → agrúpalos y formula UNA pregunta corta (máx 2 frases) que cubra todas las ausencias (zona, presupuesto, tipo de habitación, número de ocupantes).
 4. Validar políticas → consulta TOOLS.md.
 5. Personalizar tono → consulta USER.md (si es necesario).
 6. Ejecutar checks → consulta HEARTBEAT.md.
 7. ¿Necesita escalar? → consulta AGENTS.md.
 8. ¿Requiere identidad/branding? → consulta IDENTITY.md.
-9. Construir respuesta usando solo la información obtenida.
+9. Construir respuesta concisa (máx 2 oraciones) sin repetir información ya conocida.
 10. Actualizar MEMORY.md con resumen del paso.
 ```
 

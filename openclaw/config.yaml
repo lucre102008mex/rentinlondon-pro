@@ -457,3 +457,10 @@ bindings:
       accountId: default
       peer:
         kind: direct
+
+# ─── MESSAGES: Configuración de procesamiento de mensajes ─────────────────────
+messages:
+  inbound:
+    debounceMs: 20000          # 20 segundos global
+    byChannel:
+      whatsapp: 20000          # 20 segundos específico para WhatsApp
