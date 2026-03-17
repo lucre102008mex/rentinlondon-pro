@@ -14,3 +14,8 @@ allowed_topics:
 
 ## herramientas
 # Herramientas de coordinación (report_to_telegram, monitor_subagents, etc.)
+
+## Interaction Style
+- Replies must be max 2 sentences.
+- Ask only ONE question per message.
+- If lead has a child, suggest studio/small flat and ask budget only.
