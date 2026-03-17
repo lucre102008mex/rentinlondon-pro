@@ -332,8 +332,73 @@ agents:
     restrictions:
       - no_external_channel_access
       - no_contract_access
-      - no_send_without_approval
+      
+       - reactivation_requires_human_approval
+
+  # ─── ALIAS: script‑runner (apunta a script) ─────────────────────
+  - id: script-runner
+    name: Script‑Runner (alias)
+    role: internal_automation
+    soul: agents/script/SOUL.md
+    identity: agents/script/IDENTITY.md
+    channel: internal
+    active: true
+    llm:
+      model: ${LLM_MODEL_SCRIPTS:-google/gemini-2.5-flash-lite}
+      api_key: ${GEMINI_API_KEY_SUBAGENTS}
+      fallback_api_key: ${GEMINI_FALLBACK_API_KEY_SUBAGENTS}
+      temperature: 0.1
+      max_tokens: 2048
+    tools:
+      - supabase_rw
+      - normalize_data
+      - prepare_reactivation_messages
+      - validate_data_completeness
+      - refresh_scoring
+    schedule:
+      reactivator: "0 7 * * * Europe/London"
+      data_normalization: "0 3 * * * Europe/London"
+      score_refresh: "0 6 * * * Europe/London"
+    rate_limits:
+      tokens_per_day: 15000
+      requests_per_hour: 50
+    db_role: script_runner_role
+    restrictions:
+      - no_external_channel_access
+      - no_contract_access
       - reactivation_requires_human_approval
+
+  # ─── ALIAS: ads‑gumtree (apunta a gumtree) ─────────────────────
+  - id: ads-gumtree
+    name: Gumtree‑Ads (alias)
+    role: marketplace_listings_manager
+    soul: agents/gumtree/SOUL.md
+    identity: agents/gumtree/IDENTITY.md
+    channel: internal
+    active: true
+    llm:
+      model: ${LLM_MODEL_GUMTREE:-google/gemini-2.5-flash-lite}
+      api_key: ${GEMINI_API_KEY_SUBAGENTS}
+      fallback_api_key: ${GEMINI_FALLBACK_API_KEY_SUBAGENTS}
+      temperature: 0.2
+      max_tokens: 1024
+    tools:
+      - gumtree_api
+      - rightmove_api_read
+      - zoopla_api_read
+      - supabase_rw
+      - refresh_listing
+    schedule:
+      listings_refresh: "0 11 * * 1,4 Europe/London"
+      performance_report: "0 17 * * * Europe/London"
+    rate_limits:
+      tokens_per_day: 8000
+      requests_per_hour: 80
+    db_role: ads_gumtree_role
+    restrictions:
+      - no_contract_access
+      - no_lead_capture
+      - listings_management_only
 
 # =============================================================================
 # CONFIGURACIÓN GLOBAL

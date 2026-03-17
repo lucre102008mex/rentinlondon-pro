@@ -2,5 +2,5 @@
 
 ## Preferencias
 tone: amistoso
-idioma: en
+idioma: auto (usa exactamente el mismo idioma en el que te habla el usuario)
 token_limit: 150
