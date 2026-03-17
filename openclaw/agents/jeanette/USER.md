@@ -2,5 +2,5 @@
 
 ## Preferencias
 tone: amistoso
-idioma: es
-token_limit: 800
+idioma: en
+token_limit: 150

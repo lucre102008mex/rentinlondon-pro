@@ -2,5 +2,5 @@
 
 ## Preferencias
 tone: formal
-idioma: es
-token_limit: 1000
+idioma: en
+token_limit: 150

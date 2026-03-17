@@ -3,4 +3,4 @@
 ## Preferencias
 tone: formal
 idioma: en
-token_limit: 1800
+token_limit: 150
