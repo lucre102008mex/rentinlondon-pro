@@ -2,7 +2,6 @@
 
 | agente   | rol                 | trigger / handoff                         |
 |----------|---------------------|------------------------------------------|
-| Jessica  | Lettings Consultant | fallback al coordinador Alex si overflow |
 | Ivy      | Lettings Consultant | - |
 | Salo     | Lettings Consultant | - |
 | Jeanette | Lettings Consultant | - |
