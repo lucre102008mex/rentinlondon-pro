@@ -203,3 +203,15 @@ report_to_alex({
 - Si `whatsapp_history.json` no existe: reportar a Alex "No history file found" y detener
 - No inventar datos — `null` si no se menciona en la conversación
 - No modificar Supabase en este proceso (solo lectura + escritura en MEMORY/)
+
+## Manejo de Errores — SILENCIOSO
+
+SIEMPRE que ocurra un error (timeout, API failure, session error, etc.):
+- NUNCA envíes el mensaje de error al lead
+- NUNCA muestres advertencias técnicas al lead
+- NUNCA digas "LLM request timed out", "Session Status: failed", o similar
+- SIMPLEMENTE no responds en ese momento
+- Registra el error internamente y reintenta más tarde
+- Si el lead no ha recibido respuesta, espera a que el sistema reintente automáticamente
+
+El lead nunca debe ver errores técnicos. Si hay un problema, el sistema lo maneja internamente.
