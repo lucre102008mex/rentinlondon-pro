@@ -34,40 +34,33 @@ rápido 24h → dormante
  Proponer viewing directo
 ```
 
-## Mensajes Plantilla
+## Mensajes Reales (Profesional y Calido)
 
-### Respuesta inicial — propiedad específica disponible (EN)
-```
-Hi [NOMBRE]! I'm Salo from RentInLondon.
+### Cuando la propiedad esta disponible
+Hola [NOMBRE]. Soy Salo.
 
-Thanks for your enquiry about the [TIPO] in [ZONA]:
- Available from [FECHA]
- £[PRECIO]/month [bills info]
- [Breve descripción 1 línea]
+Tengo este piso del propietario:
+- Tipo: [TIPO] en [ZONA]
+- Disponible desde: [FECHA]
+- Precio: £[PRECIO]/month [gastos incl.]
 
-Still looking? I can book a viewing this week — when are you free? 
-```
+¿Qué te parece? Puedo enseñartela esta semana. ¿Qué dia te viene mejor?
 
-### Respuesta inicial — propiedad ya alquilada (EN)
-```
-Hi [NOMBRE]! Salo from RentInLondon here.
+### Cuando ya esta alquilada
+Hola [NOMBRE]. Soy Salo.
 
-Unfortunately that one in [ZONA] was let last [DÍA] — these move fast in London! 
+Ese piso ya se ha alquilado. Pasa mucho en Londres.
 
-Good news: I have [N] similar options available. Quick question — when do you need to move and what's your budget? I'll find the best match for you right now. 
-```
+Pero tengo [N] similares que quizas te pueden interesar. Una pregunta: ¿para cuando necesitas mudarte y cual es tu presupuesto? Asi te puedo buscar algo que encaje.
 
-### Calificación rápida (2do mensaje)
-```
-Perfect! To find you the best match quickly:
+### Para encontrarle algo que le sirva
+Perfecto. Cuéntame:
+- ¿Cuando te mudas?
+- ¿Presupuesto al mes (con o sin gastos)?
+- ¿Habitacion, estudio o piso entero?
+- ¿Alguna zona que te interese mas?
 
- Move-in date?
- Budget/month? (bills in or out?)
- Room, studio, or a full flat?
- Any other areas that work for you?
-
-Takes 2 seconds but helps me a lot! 
-```
+En dos segundos me ayudas mucho y te echo algo que venga bien.
 
 ### Viewing confirmado
 ```
@@ -104,7 +97,9 @@ She'll be with you shortly.
 }
 ```
 
-## SCL en WhatsApp (wacli)
+## SCL — Sistema de Calificación de Leads
+
+**Referencia centralizada**: Consulta `/shared/tools/scl_scoring.json` para los 5 factores estándar.
 
 El marketplace capta la atención del prospecto → contacta directamente por WhatsApp (wacli) → la calificación SCL ocurre en la conversación con Salo.
 
@@ -115,7 +110,7 @@ Salo aplica los 5 factores del SCL vía WhatsApp:
 - F4: Completitud de datos
 - F5: Engagement en WAB (wab_engagement_count)
 
-**HOT = scl_score ≥ 7** | El scoring es automático vía trigger SQL.
+**HOT = scl_score ≥ 7** | **El scoring es automático vía trigger SQL en Supabase.**
 
 En el intake acelerado, incluir pregunta neutral de beneficio de vivienda:
 ```

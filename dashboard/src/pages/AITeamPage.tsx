@@ -20,7 +20,7 @@ interface AgentGroup {
 
 const jeanette: Agent = {
   name: 'Jeanette',
-  role: 'Lead AI Agent — Tenant Qualification, Lead Response & WhatsApp Automation for RentInLondon',
+  role: 'Independent Lettings Manager — Legal, Documentation & International Operations',
   currentTask: 'Processing 3 WhatsApp leads from Gumtree campaign',
   status: 'active',
   lastActive: 'Now',

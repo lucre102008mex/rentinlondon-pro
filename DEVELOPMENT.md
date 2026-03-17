@@ -1,4 +1,4 @@
-# 🛠️ Guía de Desarrollo - RentInLondon PRO
+# 🛠️ Guía de Desarrollo - Lettings Operations PRO
 
 Este documento describe el flujo de trabajo técnico, las herramientas disponibles y la arquitectura de datos del sistema.
 

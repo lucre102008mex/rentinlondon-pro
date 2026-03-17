@@ -1,6 +1,7 @@
+```json
 {
   "gateway": {
-    "name": "rentinlondon-pro",
+    "name": "lettings-pro",
     "version": "1.0.0",
     "timezone": "Europe/London"
   },

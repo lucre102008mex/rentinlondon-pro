@@ -1,5 +1,5 @@
 # =============================================================================
-# RentInLondon PRO — OpenClaw Gateway Configuration
+# RentInLondon — OpenClaw Gateway Configuration
 # 8 agentes en el mismo gateway
 # Nota: Los modelos de IA se configuran en las variables de entorno
 # =============================================================================

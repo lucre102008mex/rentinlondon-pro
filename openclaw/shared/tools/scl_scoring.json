@@ -1,0 +1,74 @@
+{
+  "name": "scl_scoring",
+  "description": "Sistema de Calificación de Leads - Scoring automático para todos los agentes",
+  "trigger": "Se ejecuta automáticamente vía trigger SQL en Supabase cuando un lead es creado o actualizado",
+  "factors": {
+    "F1_urgencia": {
+      "name": "Urgencia de mudanza",
+      "weight": 2,
+      "score_mapping": {
+        "inmediate": 10,
+        "within_1_month": 8,
+        "within_3_months": 6,
+        "within_6_months": 4,
+        "unsure": 2
+      }
+    },
+    "F2_velocidad_respuesta": {
+      "name": "Velocidad de respuesta del lead",
+      "weight": 1.5,
+      "score_mapping": {
+        "under_15min": 10,
+        "under_1hour": 8,
+        "under_6hours": 6,
+        "under_24hours": 4,
+        "over_24hours": 2
+      }
+    },
+    "F3_presupuesto_mercado": {
+      "name": "Ajuste de presupuesto al mercado",
+      "weight": 2,
+      "score_mapping": {
+        "above_market": 10,
+        "at_market": 8,
+        "slightly_below": 5,
+        "significantly_below": 2
+      }
+    },
+    "F4_completitud_datos": {
+      "name": "Completitud de datos del lead",
+      "weight": 1.5,
+      "score_mapping": {
+        "full_data": 10,
+        "partial_core": 7,
+        "minimal": 4,
+        "incomplete": 2
+      }
+    },
+    "F5_engagement": {
+      "name": "Engagement en WhatsApp",
+      "weight": 1,
+      "score_mapping": {
+        "multiple_responses": 10,
+        "single_response": 6,
+        "no_response": 0
+      }
+    }
+  },
+  "thresholds": {
+    "HOT": 7,
+    "WARM": 5,
+    "COLD": 0
+  },
+  "data_required": [
+    "move_in_date",
+    "budget",
+    "employment_status",
+    "property_type",
+    "zone_preference"
+  ],
+  " DSS_handling": {
+    "if_dss_true": "Consultar v_match_dss en Supabase para propiedades compatibles",
+    "if_no_match": "Escalar a Jeanette para manejo especializado"
+  }
+}

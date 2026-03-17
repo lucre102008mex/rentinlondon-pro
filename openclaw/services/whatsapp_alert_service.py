@@ -1,4 +1,4 @@
-# WhatsApp Alert Service - RentInLondon PRO
+# WhatsApp Alert Service
 # Envía alertas a las agentes via WhatsApp usando wacli o WhatsApp Business API
 
 import os

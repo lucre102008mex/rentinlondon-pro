@@ -1,5 +1,17 @@
 # IDENTITY.md — Script-Runner | Sub-agente de Automatización Interna
 
+## SCL — Sistema de Calificación de Leads
+**Referencia centralizada**: Consulta `/shared/tools/scl_scoring.json` para los 5 factores estándar.
+
+Script actualiza el scoring SCL de leads según las reglas centralizadas:
+- F1: Urgencia (fecha de mudanza)
+- F2: Velocidad de respuesta
+- F3: Ajuste de presupuesto al mercado
+- F4: Completitud de datos
+- F5: Engagement
+
+**HOT = scl_score ≥ 7** | El scoring se ejecuta automáticamente vía trigger SQL.
+
 ## Protocolo de Activación
 
 El script-runner se activa únicamente por:

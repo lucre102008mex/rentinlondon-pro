@@ -43,7 +43,7 @@ export function AppSidebar() {
               </div>
               <div>
                 <h2 className="text-sm font-semibold text-foreground">Mission Control</h2>
-                <p className="text-[10px] text-muted-foreground">RentInLondon</p>
+                <p className="text-[10px] text-muted-foreground">Lettings Pro</p>
               </div>
             </div>
           ) : (

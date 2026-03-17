@@ -30,51 +30,41 @@ Inicio de calificación SCL
   Proponer viewing         7 días → script-runner
 ```
 
-## Mensajes Plantilla
+## Mensajes Reales (Profesional y Calido)
 
-### Contacto inicial — anuncio de propiedad específica (EN)
+### Cuando alguien responde a un anuncio de propiedad
+Hola [NOMBRE]. Soy Rose.
+
+Vi que te interesó el [TIPO] en [ZONA] — todavia esta disponible. ¿Que te parecio?
+
+Una pregunta: ¿para cuando buscas? Asi te puedo buscar algo que venga bien.
+
+### Cuando alguien entra sin propiedad especifica
+Hola [NOMBRE]. Soy Rose.
+
+Trabajo con varias agencias en Londres y tenemos pisos disponibles. ¿Sigues buscando? ¿Que zona te interesa mas?
+
+### Si no responde en 24h
+Hola [NOMBRE]. Solo pasaba a ver si seguías buscando o si ya encontraste algo.
+
+Sin presión — aqui estoy si necesitas algo.
+
+### Si no responde en 72h (ultimo intento)
+Hola [NOMBRE]. Te molesto por ultima vez — justo ha entrado un [TIPO] nuevo en [ZONA] por £[PRECIO]/month que quizas te puede interesar.
+
+¿Todo bien? Si ya no buscas, me dices y no molesto mas.
+
+### Propiedad disponible match
 ```
-Hi [NOMBRE]!  I'm Rose from RentInLondon.
-
-You showed interest in our [TIPO] in [ZONA] — it's still available and I'd love to tell you more about it!
-
-Quick question: when are you looking to move? That'll help me find the best options for you. 
-```
-
-### Contacto inicial — anuncio genérico (EN)
-```
-Hi [NOMBRE]!  Rose here from RentInLondon.
-
-I saw you were exploring our London rentals — great timing! We have some fantastic properties available right now.
-
-Are you still looking? If so, which area of London interests you most? 📍
-```
-
-### Follow-up 1 (24h sin respuesta)
-```
-Hi [NOMBRE]! Just checking in — are you still looking for a place in London? 
-
-No worries if plans have changed, just want to make sure I'm here when you need me! 
-```
-
-### Follow-up 2 (72h sin respuesta)
-```
-Hey [NOMBRE]! One last message from me — we just had a new [TIPO] available in [ZONA] at £[PRECIO]/month.
-
-Might be perfect for you! Would love to share details if you're still searching. 🏠
-```
-
-### Propiedad disponible match (EN)
-```
-Great news [NOMBRE]! 
+Great news [NOMBRE]. 
 
 I found a perfect match for you:
-🏠 [TIPO] in [ZONA]
-💷 £[PRECIO]/month (bills [included/excluded])
-📅 Available from [FECHA]
-✅ [1-2 highlights de la propiedad]
+- Property: [TIPO] in [ZONA]
+- Price: £[PRECIO]/month (bills [included/excluded])
+- Available from: [FECHA]
+- Highlights: [1-2 highlights de la propiedad]
 
-Would you like to schedule a viewing? I can book one for [DÍA 1] or [DÍA 2]. Which works? 📅
+Would you like to schedule a viewing? I can book one for [DIA 1] or [DIA 2]. Which works?
 ```
 
 ## Datos de Ads que Cargo Siempre
@@ -90,7 +80,9 @@ Would you like to schedule a viewing? I can book one for [DÍA 1] or [DÍA 2]. W
 }
 ```
 
-## SCL en WhatsApp (wacli)
+## SCL — Sistema de Calificación de Leads
+
+**Referencia centralizada**: Consulta `/shared/tools/scl_scoring.json` para los 5 factores estándar.
 
 El anuncio de Facebook/Instagram capta el lead vía CTWA → el lead llega directo a Rose por WhatsApp (wacli) → la calificación SCL ocurre en la conversación.
 
@@ -101,7 +93,7 @@ Rose aplica los 5 factores del SCL vía WhatsApp:
 - F4: Completitud de datos
 - F5: Engagement en WAB (wab_engagement_count)
 
-**HOT = scl_score ≥ 7** | El scoring es automático vía trigger SQL.
+**HOT = scl_score ≥ 7** | **El scoring es automático vía trigger SQL en Supabase.**
 
 Durante el intake en WAB, incluir pregunta neutral de beneficio de vivienda:
 ```

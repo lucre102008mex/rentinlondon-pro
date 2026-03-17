@@ -1,11 +1,11 @@
 # Google Sheets CRM — Setup Guide
-## RentInLondon PRO
+## Lettings Operations PRO
 
 ## Paso 1: Crear la hoja de cálculo
 
 1. Ve a [sheets.google.com](https://sheets.google.com)
 2. Crea una nueva hoja de cálculo
-3. Nómbrala: **RentInLondon PRO — CRM**
+3. Nómbrala: **Lettings CRM — PRO**
 4. Copia el ID de la URL: `https://docs.google.com/spreadsheets/d/`**ESTE_ES_EL_ID**`/edit`
 5. Guarda el ID — lo necesitarás en `GOOGLE_SHEETS_ID`
 
@@ -29,7 +29,7 @@ Crea exactamente estas pestañas (exactamente con estos nombres):
    - APIs & Services → Enable APIs → buscar "Google Sheets API" → Enable
 4. Crea una cuenta de servicio:
    - IAM & Admin → Service Accounts → Create Service Account
-   - Nombre: `rentinlondon-sheets-sync`
+   - Nombre: `lettings-sheets-sync`
    - Rol: ninguno en el proyecto (el acceso lo dará la hoja)
 5. Crear y descargar la clave:
    - En la cuenta de servicio → Keys → Add Key → JSON
@@ -50,14 +50,14 @@ Crea exactamente estas pestañas (exactamente con estos nombres):
 
 ```bash
 # En supabase/.env:
-GOOGLE_SA_EMAIL=rentinlondon-sheets-sync@TU_PROYECTO.iam.gserviceaccount.com
+GOOGLE_SA_EMAIL=lettings-sheets-sync@TU_PROYECTO.iam.gserviceaccount.com
 GOOGLE_SA_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\nMIIEo...\n-----END RSA PRIVATE KEY-----\n"
 GOOGLE_SHEETS_ID=1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms
 ```
 
 ```bash
 # Configurar en Supabase Edge Functions Secrets:
-supabase secrets set GOOGLE_SA_EMAIL="rentinlondon-sheets-sync@TU_PROYECTO.iam.gserviceaccount.com"
+supabase secrets set GOOGLE_SA_EMAIL="lettings-sheets-sync@TU_PROYECTO.iam.gserviceaccount.com"
 supabase secrets set GOOGLE_SA_PRIVATE_KEY="$(cat ruta/al/archivo.json | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['private_key'])")"
 supabase secrets set GOOGLE_SHEETS_ID="TU_SPREADSHEET_ID"
 ```
